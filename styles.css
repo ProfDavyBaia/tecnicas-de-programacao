@@ -1,0 +1,40 @@
+/* Rolagem suave ao clicar nos links do menu (âncoras #aulas, #ementa...) */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Limita a largura do conteúdo mesmo com page-layout: full,
+   para o texto não esticar a tela toda em monitores largos */
+.content {
+  max-width: 860px;
+  margin: 0 auto;
+  counter-reset: secao;
+}
+
+/* Espaçamento entre as seções principais (h2), sem marcador antes do título */
+.content h2 {
+  position: relative;
+  margin-top: 3rem;
+  /* compensa a navbar fixa, pra o título não ficar escondido atrás dela
+     quando o menu rola até a seção */
+  scroll-margin-top: 4.5rem;
+}
+
+/* Cartão de cada aula, dentro da seção "Aulas" */
+.aula-card {
+  display: flex;
+  gap: 1.25rem;
+  padding: 1.25rem 0;
+  border-top: 1px solid rgba(128, 128, 128, 0.25);
+  align-items: baseline;
+}
+.aula-card .numero {
+  font-weight: 700;
+  font-size: 1.5rem;
+  min-width: 2.5rem;
+  opacity: 0.5;
+}
+.aula-card .links a {
+  margin-right: 0.75rem;
+  font-size: 0.85rem;
+}

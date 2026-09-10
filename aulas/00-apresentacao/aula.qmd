@@ -1,0 +1,180 @@
+---
+title: "Aula 00 — Apresentação da Disciplina e Revisão de Lógica de Programação"
+# format revealjs sobrescreve o formato do site (html) só para esta página:
+# ela renderiza como apresentação de slides, sem a navbar do site.
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    transition: fade
+    css: ../../styles-slides.css
+---
+
+## Sobre o professor
+
+**Prof. Davy de Medeiros Baía**
+
+- Pós-Doutorado em Informática — PUC-Rio
+- Doutor em Informática — PUC-Rio / University of Washington
+- Mestre em Modelagem Computacional de Conhecimento — UFAL / PUC-Rio
+- MBA em Gerenciamento de Projetos — FGV
+- Especialização em Engenharia de Software e Web — Estácio
+- Graduação em Sistemas de Informação — Estácio
+
+[davy.baia@ceca.ufal.br](mailto:davy.baia@ceca.ufal.br)
+
+## Áreas de interesse
+
+- Engenharia de Software
+- Gestão de Projetos
+- Empreendedorismo
+- Inteligência Artificial | Sistemas Multiagentes
+
+## Projetos de empreendedorismo e inovação
+
+- **SensuS Emotion** — Meu Futuro Negócio
+- **SensuS Baby** — Nascer de Ideias
+- **ProMabs**
+- **LES**
+
+## Ementa
+
+- Estruturas de dados: pilhas, listas, filas, árvores e tabelas hash
+- Algoritmos de ordenação
+- Noções de programação orientada a objetos: conceitos básicos, modelo de
+  programação e aplicações em engenharia
+
+## Metodologia
+
+- Aulas expositivas e debates sobre os temas do programa
+- Trabalhos individuais e em grupo
+
+## Avaliação
+
+Composição da nota:
+
+| Componente | Peso |
+|---|---:|
+| Assiduidade | 2 |
+| Avaliações (atividades práticas e exercícios síncronos/assíncronos) | 8 |
+| **Total** | **10** |
+
+A participação nos encontros síncronos também é considerada.
+
+## Revisão de lógica de programação
+
+A partir de agora, revisão dos fundamentos de Python: entrada de dados,
+condicionais e laços de repetição.
+
+## Atividade 1 — Soma de dois números
+
+Crie um programa em Python que:
+
+- Receba dois números do usuário e armazene-os nas variáveis `a` e `b`
+- Calcule a soma desses números
+- Mostre o resultado na tela
+
+```python
+Digite o valor de a: 5
+Digite o valor de b: 3
+A soma de a e b é: 8
+```
+
+## Atividade 1 — variação com menu
+
+```python
+Digite o valor de a: 10
+Digite o valor de b: 4
+1 - Soma
+2 - Subtração
+Escolha uma operação: 2
+Resultado da subtração: 6
+```
+
+## Atividade 2 — Soma de N números (`for`)
+
+Desenvolva um programa que:
+
+- Pergunte quantos números o usuário deseja informar
+- Utilize `for` para receber cada número e acumular a soma
+- Apresente o resultado final
+
+```python
+Quantos números você deseja somar? 3
+Digite o 1º número: 10
+Digite o 2º número: 5
+Digite o 3º número: 2
+A soma de todos os números é: 17
+```
+
+**Requisitos:** usar `for`; permitir escolher a quantidade de números;
+armazenar a soma em uma variável acumuladora.
+
+## Atividade 3 — Pares e ímpares
+
+- Pergunte quantos números o usuário deseja informar
+- Use `for` para receber os números
+- Para cada número, use `if`/`else` para indicar se é par ou ímpar
+- Ao final, mostre o total de pares e ímpares
+
+```python
+Quantos números deseja informar? 4
+Digite o 1º número: 10 → 10 é par.
+Digite o 2º número: 7  → 7 é ímpar.
+Digite o 3º número: 4  → 4 é par.
+Digite o 4º número: 9  → 9 é ímpar.
+Quantidade de números pares: 2
+Quantidade de números ímpares: 2
+```
+
+💡 Dica: um número é par quando o resto da divisão por 2 é igual a zero.
+
+## Atividade 4 — Calculadora com menu
+
+Programa com menu de opções, repetido com `while` até o usuário escolher
+sair:
+
+```
+1 - Somar
+2 - Subtrair
+3 - Multiplicar
+0 - Sair
+```
+
+- Solicita dois números e realiza a operação escolhida
+- Repete o menu após mostrar o resultado
+- Encerra somente quando a opção `0` for escolhida
+- Opção inválida → exibe "Opção inválida" e mostra o menu novamente
+
+## Atividade 4 — exemplos de execução
+
+```python
+Escolha uma opção: 1
+Digite o primeiro número: 10
+Digite o segundo número: 5
+Resultado: 15
+```
+
+```python
+Escolha uma opção: 3
+Digite o primeiro número: 4
+Digite o segundo número: 5
+Resultado: 20
+```
+
+```python
+Escolha uma opção: 0
+Programa encerrado.
+```
+
+## Atividade 4 — requisitos
+
+- Usar variáveis para armazenar números, opção e resultado
+- Usar `while` para repetir o menu
+- Usar `if` / `elif` / `else` para tratar a opção escolhida
+- Mostrar o resultado de cada operação
+- Encerrar somente quando a opção `0` for escolhida
+
+## Obrigado
+
+Dúvidas? [davy.baia@ceca.ufal.br](mailto:davy.baia@ceca.ufal.br)

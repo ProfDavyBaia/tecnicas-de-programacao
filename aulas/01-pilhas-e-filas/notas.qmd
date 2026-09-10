@@ -1,0 +1,358 @@
+---
+title: "Notas — Aula 01: Estruturas de Dados — Pilhas e Filas"
+---
+
+## Introdução
+
+Esta aula explora dois dos tipos de estruturas de dados lineares mais
+importantes da computação: **pilhas** e **filas**. O percurso segue uma
+progressão lógica do conceito à prática: fundamentos, pilhas, filas,
+aplicações práticas em engenharia e exercícios de fixação.
+
+## O que são estruturas de dados
+
+Uma **estrutura de dados** é uma forma organizada de armazenar, gerenciar
+e acessar informações na memória do computador. A escolha correta da
+estrutura impacta diretamente o desempenho e a eficiência dos algoritmos.
+Elas se dividem em três grandes famílias:
+
+- **Lineares** — elementos organizados em sequência: arrays, listas,
+  pilhas e filas.
+- **Hierárquicas** — elementos em relações pai-filho: árvores e heaps.
+- **Em rede** — conexões arbitrárias entre elementos: grafos e tabelas
+  hash.
+
+## Por que estudar pilhas e filas
+
+Pilhas e filas estão presentes em sistemas operacionais, compiladores,
+protocolos de rede, microcontroladores e sistemas de tempo real — todos
+fundamentais para o engenheiro elétrico moderno. Algumas aplicações
+diretas: gerenciamento de interrupções em microcontroladores (Arduino,
+STM32), buffers de dados em comunicação serial (UART, SPI, I2C), análise
+de expressões matemáticas em calculadoras, escalonamento de tarefas em
+sistemas embarcados e controle de fluxo em redes de computadores.
+
+## Pilhas (Stacks)
+
+### Conceito e princípio LIFO
+
+Uma **pilha (stack)** é uma estrutura de dados linear que segue o
+princípio **LIFO — Last In, First Out**: o elemento inserido por último é
+sempre o primeiro a ser removido, como uma pilha de pratos — sempre se
+retira e coloca pratos pelo topo.
+
+As operações fundamentais, todas O(1):
+
+- **PUSH** — insere um elemento no topo da pilha.
+- **POP** — remove o elemento no topo da pilha.
+- **PEEK / TOP** — consulta o topo sem remover o elemento.
+- **isEmpty** — verifica se a pilha está vazia antes de operar, evitando
+  erros de underflow.
+
+O **ponteiro de topo** é o único ponto de acesso da pilha. Tentar remover
+de uma pilha vazia gera um erro chamado **stack underflow**; inserir além
+da capacidade gera **stack overflow**. Uma sequência típica de operações
+— `Push(A)`, `Push(B)`, `Push(C)`, `Pop()` — mostra o ponteiro de topo se
+movendo a cada chamada.
+
+### Implementação em Python
+
+Python oferece duas formas principais de implementar pilhas: usando
+`list` nativa, ou encapsulando o comportamento em uma classe.
+
+Com lista:
+
+```python
+pilha = []
+
+# PUSH - empilhar
+pilha.append(10)
+pilha.append(20)
+pilha.append(30)
+print(pilha)  # [10, 20, 30]
+
+# PEEK - consultar topo
+topo = pilha[-1]
+print(topo)   # 30
+
+# POP - desempilhar
+elemento = pilha.pop()
+print(elemento)  # 30
+print(pilha)     # [10, 20]
+
+if not pilha:
+    print("Pilha vazia!")
+```
+
+Com classe orientada a objetos:
+
+```python
+class Pilha:
+    def __init__(self):
+        self._dados = []
+
+    def push(self, item):
+        self._dados.append(item)
+
+    def pop(self):
+        if self.is_empty():
+            raise IndexError("Underflow!")
+        return self._dados.pop()
+
+    def peek(self):
+        return self._dados[-1]
+
+    def is_empty(self):
+        return len(self._dados) == 0
+
+    def size(self):
+        return len(self._dados)
+
+p = Pilha()
+p.push(5)
+p.push(10)
+print(p.peek())  # 10
+print(p.pop())   # 10
+```
+
+### Aplicação prática: verificador de parênteses
+
+Um dos usos clássicos de pilhas é a **verificação de expressões
+balanceadas**, fundamental em compiladores e parsers de linguagens. O
+algoritmo percorre a string, empilhando aberturas e verificando se cada
+fechamento corresponde à última abertura pendente:
+
+```python
+def verificar_parenteses(expressao):
+    """Verifica se parênteses, colchetes e chaves estão balanceados."""
+    pilha = []
+    pares = {')': '(', ']': '[', '}': '{'}
+    abertos = set('([{')
+
+    for char in expressao:
+        if char in abertos:
+            pilha.append(char)
+        elif char in pares:
+            if not pilha or pilha[-1] != pares[char]:
+                return False
+            pilha.pop()
+
+    return len(pilha) == 0
+
+print(verificar_parenteses("(a + b) * [c - d]"))  # True
+print(verificar_parenteses("(x + [y))"))          # False
+print(verificar_parenteses("{V = I * R}"))        # True
+```
+
+Esse algoritmo roda em O(n), onde n é o tamanho da expressão, e é usado
+em IDEs, compiladores (Python, Java, C++) e em avaliadores de circuitos
+lógicos.
+
+### Pilhas em sistemas embarcados: call stack
+
+Em microcontroladores como **Arduino (ATmega328)** e **STM32**, a pilha
+de chamadas (*call stack*) gerencia automaticamente o retorno de
+sub-rotinas e o contexto de interrupções. Quando ocorre uma interrupção,
+o estado dos registradores é empilhado; ao finalizar, é desempilhado.
+
+- **Stack Pointer (SP)** — registrador dedicado que aponta sempre para o
+  topo da pilha de hardware. Em ARM Cortex-M, cresce para endereços
+  menores (pilha descendente).
+- **Context Saving** — ao entrar em uma ISR (Interrupt Service Routine),
+  PC, LR e registradores são automaticamente empilhados pelo hardware
+  para preservar o estado do programa.
+
+## Filas (Queues)
+
+### Conceito e princípio FIFO
+
+Uma **fila (queue)** é uma estrutura de dados linear que segue o
+princípio **FIFO — First In, First Out**: o elemento inserido primeiro é
+sempre o primeiro a ser removido, como uma fila de atendimento bancário.
+A inserção ocorre no **fim (rear)** e a remoção na **frente (front)**.
+
+Operações fundamentais, todas O(1):
+
+- **ENQUEUE** — insere no final da fila (rear/back).
+- **DEQUEUE** — remove da frente da fila (front/head).
+- **FRONT** — consulta o primeiro elemento sem remover.
+
+A diferença fundamental em relação à pilha é que a **fila tem duas
+extremidades ativas**. Isso exige atenção especial na implementação com
+arrays, onde o deslocamento de memória pode tornar o dequeue ineficiente
+(O(n)) se não for tratado com ponteiros circulares. Uma sequência típica
+— `Enqueue(A)`, `Enqueue(B,C)`, `Dequeue() → A`, `Dequeue() → B` — ilustra
+os elementos entrando pelo rear e saindo pelo front.
+
+### Implementação em Python
+
+Python oferece `collections.deque` como implementação otimizada para
+filas, com operações O(1) em ambas as extremidades:
+
+```python
+from collections import deque
+
+fila = deque()
+
+fila.append("Tarefa_1")
+fila.append("Tarefa_2")
+fila.append("Tarefa_3")
+print(fila)
+# deque(['Tarefa_1','Tarefa_2','Tarefa_3'])
+
+print(fila[0])  # Tarefa_1 (FRONT)
+
+atendido = fila.popleft()
+print(atendido)  # Tarefa_1
+print(fila)
+# deque(['Tarefa_2', 'Tarefa_3'])
+
+print(len(fila) == 0)  # False
+```
+
+Também é possível implementar uma fila com nó encadeado, sem depender de
+`deque`:
+
+```python
+class No:
+    def __init__(self, dado):
+        self.dado = dado
+        self.proximo = None
+
+class Fila:
+    def __init__(self):
+        self.front = None
+        self.rear = None
+        self._tamanho = 0
+
+    def enqueue(self, item):
+        novo = No(item)
+        if self.rear:
+            self.rear.proximo = novo
+        self.rear = novo
+        if not self.front:
+            self.front = novo
+        self._tamanho += 1
+
+    def dequeue(self):
+        if not self.front:
+            raise IndexError("Fila vazia!")
+        dado = self.front.dado
+        self.front = self.front.proximo
+        if not self.front:
+            self.rear = None
+        self._tamanho -= 1
+        return dado
+```
+
+### Variações de filas
+
+Existem variações especializadas da fila básica que atendem requisitos
+específicos de sistemas reais, especialmente em tempo real e em
+comunicações:
+
+- **Fila circular** — utiliza um array com ponteiros `front` e `rear`
+  que "giram" em módulo, eliminando desperdício de memória. Ideal para
+  buffers de hardware de tamanho fixo.
+- **Fila de prioridade** — cada elemento possui uma prioridade associada,
+  e o dequeue sempre retira o elemento de maior prioridade,
+  independentemente da ordem de inserção. Normalmente implementada com
+  heap.
+- **Deque (double-ended)** — permite inserção e remoção em ambas as
+  extremidades, generalizando pilhas e filas. Em Python,
+  `collections.deque` implementa exatamente esse tipo.
+
+### Buffer circular: aplicação em UART
+
+Em sistemas embarcados, o **buffer circular (ring buffer)** é a
+implementação de fila mais utilizada para comunicação serial UART. A ISR
+de recepção faz *enqueue* dos bytes recebidos; a rotina principal faz
+*dequeue* para processá-los. Isso desacopla a recepção do processamento:
+
+```python
+class BufferCircular:
+    def __init__(self, capacidade):
+        self.buffer = [None] * capacidade
+        self.capacidade = capacidade
+        self.head = 0  # posição de leitura
+        self.tail = 0  # posição de escrita
+        self.tamanho = 0
+
+    def enqueue(self, byte):
+        if self.tamanho == self.capacidade:
+            raise OverflowError("Buffer cheio! Dado perdido.")
+        self.buffer[self.tail] = byte
+        self.tail = (self.tail + 1) % self.capacidade
+        self.tamanho += 1
+
+    def dequeue(self):
+        if self.tamanho == 0:
+            return None
+        dado = self.buffer[self.head]
+        self.head = (self.head + 1) % self.capacidade
+        self.tamanho -= 1
+        return dado
+```
+
+## Comparativo: pilha vs. fila
+
+| Característica | Pilha (Stack) | Fila (Queue) |
+|---|---|---|
+| Princípio | LIFO — último a entrar, primeiro a sair | FIFO — primeiro a entrar, primeiro a sair |
+| Inserção | Sempre no topo (push) | Sempre no fim (enqueue) |
+| Remoção | Sempre do topo (pop) | Sempre da frente (dequeue) |
+| Complexidade | O(1) push e pop | O(1) enqueue e dequeue |
+| Uso típico | Recursão, desfazer ações, expressões | Buffers, escalonamento, BFS em grafos |
+| Em Python | `list` com append/pop | `deque` com append/popleft |
+
+## Análise de complexidade
+
+A eficiência das operações é um critério fundamental na escolha de
+estruturas de dados. Pilhas e filas se destacam pela constância de suas
+operações principais:
+
+- **O(1)** para push/pop (pilha): inserção e remoção no topo são sempre
+  constantes, independente do tamanho.
+- **O(1)** para enqueue/dequeue (fila com `deque`): ambas as operações
+  são O(1) garantido em Python.
+- **O(n)** para busca: acessar elementos intermediários exige percorrer
+  toda a estrutura — não é o ponto forte dessas estruturas.
+- **O(n)** de espaço: a memória usada é proporcional ao número de
+  elementos armazenados.
+
+Atenção: usar `list.pop(0)` em Python para simular uma fila é O(n) —
+evite. Use sempre `collections.deque` para filas eficientes.
+
+## Aplicações em engenharia elétrica
+
+Pilhas e filas aparecem em praticamente todos os domínios da engenharia
+elétrica moderna:
+
+- **Redes e protocolos** — roteadores utilizam filas de pacotes para
+  gerenciar tráfego; algoritmos como BFS, usados para encontrar o menor
+  caminho em topologias de rede, usam filas diretamente.
+- **Processadores e sistemas operacionais** — a CPU usa uma pilha de
+  hardware para chamadas de função e interrupções; o escalonador de
+  processos usa filas de prioridade para decidir qual tarefa executa a
+  seguir.
+- **Processamento de sinais** — janelas deslizantes para filtros FIR são
+  implementadas com filas circulares: a cada novo sample, enqueue do novo
+  e dequeue do mais antigo, em O(1).
+
+## Exercício final
+
+**Desafio prático:** implemente em Python um simulador de escalonador de
+tarefas para um microcontrolador que:
+
+1. Usa uma **fila de prioridade** para gerenciar 5 tarefas com
+   prioridades diferentes.
+2. Usa uma **pilha** para registrar o histórico de execuções (log).
+3. Permite desfazer (undo) a última tarefa executada.
+
+**Resumo dos conceitos-chave:**
+
+- Pilha: LIFO — push, pop, peek em O(1).
+- Fila: FIFO — enqueue, dequeue em O(1).
+- Buffer circular: fila de tamanho fixo para hardware.
+- Deque: generalização com duas extremidades ativas.
+- Em Python: use `list` para pilhas e `deque` para filas.

@@ -1,0 +1,42 @@
+project:
+  type: website
+  render:
+    - "*.qmd"
+    - "aulas/**/*.qmd"
+
+# engine jupyter: necessário se a disciplina tiver blocos ```{python}```.
+# remova esta linha se a disciplina for só conteúdo estático (sem código)
+engine: jupyter
+
+website:
+  title: "Técnicas de Programação"
+  description: "UFAL - Campus CECA, Rio Largo"
+  navbar:
+    left:
+      # links âncora para as seções da página única (index.qmd) —
+      # os ids (#aulas, #ementa etc.) são definidos nos títulos do index.qmd
+      - href: index.qmd
+        text: Início
+      - href: index.qmd#aulas
+        text: Aulas
+      - href: index.qmd#ementa
+        text: Ementa
+      - href: index.qmd#cronograma
+        text: Cronograma
+      - href: index.qmd#avaliacao
+        text: Avaliação
+      - href: index.qmd#bibliografia
+        text: Bibliografia
+    right:
+      - icon: github
+        href: "https://github.com/profdavybaia/tecnicas-de-programacao"
+        text: Repositório
+
+format:
+  html:
+    theme:
+      light: flatly # tema claro
+      dark: darkly # tema escuro — a navbar ganha um botão de alternância automática
+    css: styles.css
+    toc: false
+    page-layout: full

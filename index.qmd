@@ -1,0 +1,94 @@
+---
+title: "Técnicas de Programação"
+subtitle: "EGEL013 · Engenharia Elétrica · UFAL - Campus CECA"
+---
+
+:::{.content}
+
+*Fundamentos de estruturas de dados, algoritmos e programação orientada a
+objetos aplicados à engenharia.*
+
+A disciplina desenvolve a capacidade de projetar, implementar e analisar
+estruturas de dados clássicas — pilhas, listas, filas, árvores e tabelas
+hash — e algoritmos de ordenação, além de introduzir os conceitos
+fundamentais da programação orientada a objetos, com aplicações voltadas à
+engenharia.
+
+## Aulas {#aulas}
+
+Cada aula tem *slides* (apresentação em HTML — tecla `P` entra em modo
+apresentação, `←`/`→` navegam) e *notas* (texto de referência).
+
+:::{.aula-card}
+<div class="numero">00</div>
+<div>
+<strong>Apresentação da disciplina e revisão de lógica de programação</strong>
+
+Quem é o professor, ementa, metodologia e critérios de avaliação da
+disciplina, seguido de uma revisão prática de entrada de dados,
+condicionais e laços de repetição em Python.
+
+<span class="links">[Slides](aulas/00-apresentacao/aula.html) ·
+[Notas](aulas/00-apresentacao/notas.qmd)</span>
+</div>
+:::
+
+:::{.aula-card}
+<div class="numero">01</div>
+<div>
+<strong>Estruturas de dados: pilhas e filas</strong>
+
+Conceito e princípio LIFO/FIFO, operações fundamentais, implementação em
+Python (lista, `deque`, classes), aplicações práticas (verificador de
+parênteses, call stack, buffer circular em UART) e comparativo entre as
+duas estruturas.
+
+<span class="links">[Slides](aulas/01-pilhas-e-filas/aula.html) ·
+[Notas](aulas/01-pilhas-e-filas/notas.qmd)</span>
+</div>
+:::
+
+<!-- Duplique o bloco ":::{.aula-card} ... :::" acima para cada nova aula -->
+
+## Ementa {#ementa}
+
+1. Estruturas de dados: pilhas, listas, filas, árvores e tabelas hash
+2. Algoritmos de ordenação
+3. Noções de programação orientada a objetos: conceitos básicos, modelo de
+   programação e aplicações em engenharia
+
+## Cronograma {#cronograma}
+
+<!-- Pendente: preencher semanas/datas conforme o calendário acadêmico 2026.2 -->
+
+| Semana | Data | Tema |
+|:------:|------|------|
+| 1      |      | Apresentação da disciplina e revisão de lógica de programação |
+| 2      |      | Estruturas de dados: pilhas e filas |
+
+## Avaliação {#avaliacao}
+
+**Metodologia:** aulas expositivas e debates sobre os temas do programa,
+com trabalhos individuais e em grupo.
+
+**Composição da nota:** Assiduidade (2) + Avaliações — atividades
+práticas e exercícios síncronos e assíncronos, incluindo a participação
+nos encontros síncronos (8) = 10.
+
+## Bibliografia {#bibliografia}
+
+**Básica**
+
+<!-- Referências principais -->
+
+**Complementar**
+
+<!-- Referências de apoio -->
+
+## Docente {#docente}
+
+**Prof. Davy Baia** — UFAL, Campus CECA (Rio Largo).
+
+Dúvidas: [davy.baia@ceca.ufal.br](mailto:davy.baia@ceca.ufal.br)
+
+:::
