@@ -6,10 +6,11 @@ title: "Atividade — Aula 04: Tabelas Hash"
 
 Implemente uma tabela hash própria (com encadeamento) que:
 
-1. Suporte `inserir(chave, valor)`, `buscar(chave)` e `remover(chave)`.
+1. Suporte funções `inserir(tabela, chave, valor)`, `buscar(tabela, chave)`
+   e `remover(tabela, chave)`.
 2. Calcule e imprima o fator de carga atual.
-3. Implemente um método `redimensionar()` que dobre a capacidade e
-   reinsira todas as chaves quando o fator de carga ultrapassar 0.7.
+3. Implemente uma função `_redimensionar(tabela)` que dobre a capacidade
+   e reinsira todas as chaves quando o fator de carga ultrapassar 0.7.
 4. Compare o tempo de busca da sua tabela hash com uma busca linear em
    lista, para o mesmo conjunto de dados (use o módulo `timeit` — os
    tempos exatos variam por máquina, mas a tabela hash deve ser
@@ -18,10 +19,11 @@ Implemente uma tabela hash própria (com encadeamento) que:
 
 **Requisitos:**
 
-- Cada posição do array interno (`bucket`) deve ser uma lista de pares
-  chave-valor.
+- A tabela pode ser representada por um dicionário com `"capacidade"`,
+  `"tamanho"` e `"buckets"`; cada posição do array interno (`bucket`)
+  deve ser uma lista de pares chave-valor.
 - O redimensionamento deve acontecer automaticamente dentro de
-  `inserir()`, sem que quem usa a classe precise chamá-lo manualmente.
+  `inserir()`, sem que quem chama a função precise chamá-lo manualmente.
 - `buscar()` e `remover()` devem levantar `KeyError` quando a chave não
   existir.
 

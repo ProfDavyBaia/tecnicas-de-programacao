@@ -162,3 +162,22 @@ Também testamos o caminho de opção inválida: com a entrada `9`, `1`,
 `2`, `3`, `0`, o programa imprime "Opção inválida" para a opção `9`,
 depois processa normalmente a soma `1 + 2 = 3` na opção `1`, e encerra na
 opção `0`.
+
+## Atividade 5 — Gabarito
+
+```python
+def somar(a, b):
+    return a + b
+
+a = int(input("Digite o valor de a: "))
+b = int(input("Digite o valor de b: "))
+print(f"A soma de a e b é: {somar(a, b)}")
+```
+
+Saída verificada (entrada `5`, `3`):
+
+```
+Digite o valor de a: 5
+Digite o valor de b: 3
+A soma de a e b é: 8
+```

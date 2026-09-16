@@ -298,6 +298,73 @@ Escolha uma opção: 0
 Programa encerrado.
 ```
 
+## Funções em Python
+
+Até agora, todo código roda de cima para baixo, em um único bloco. Uma
+**função** agrupa um trecho de código, dá um nome a ele, e permite
+reutilizá-lo quantas vezes for preciso — passando informações diferentes
+a cada chamada.
+
+- **`def`** — palavra-chave que inicia a definição de uma função
+- **Parâmetros** — variáveis que a função recebe como entrada, entre
+  parênteses
+- **`return`** — devolve um valor para quem chamou a função (sem
+  `return`, a função devolve `None`)
+- **Escopo local** — variáveis criadas dentro da função só existem
+  enquanto ela executa
+
+## Funções em Python — exemplo
+
+```python
+def somar(a, b):
+    resultado = a + b   # variável local: só existe aqui dentro
+    return resultado
+
+print(somar(3, 4))    # 7
+print(somar(10, 5))   # 15
+```
+
+A função `somar` pode ser chamada quantas vezes for necessário, com
+valores diferentes, sem repetir o código de soma a cada vez. Esse é o
+padrão que vamos usar a partir da próxima aula: funções que recebem
+dados (listas, dicionários) como parâmetro e retornam um resultado.
+
+## Atividade 5 — Reaproveitando código com uma função
+
+Reescreva a Atividade 1 (soma de dois números) usando uma **função**
+`somar(a, b)` que recebe os dois números e retorna o resultado. O
+programa principal pede os números ao usuário, chama a função e mostra
+o resultado.
+
+```
+Digite o valor de a: 5
+Digite o valor de b: 3
+A soma de a e b é: 8
+```
+
+**Requisitos:** usar `def` para criar a função `somar(a, b)`; usar
+`return` para devolver o resultado; chamar a função a partir do
+programa principal, passando os valores lidos do usuário.
+
+## Atividade 5 — Gabarito
+
+```python
+def somar(a, b):
+    return a + b
+
+a = int(input("Digite o valor de a: "))
+b = int(input("Digite o valor de b: "))
+print(f"A soma de a e b é: {somar(a, b)}")
+```
+
+Saída verificada (entrada `5`, `3`):
+
+```
+Digite o valor de a: 5
+Digite o valor de b: 3
+A soma de a e b é: 8
+```
+
 ## Obrigado
 
 Dúvidas? [davy.baia@ceca.ufal.br](mailto:davy.baia@ceca.ufal.br)

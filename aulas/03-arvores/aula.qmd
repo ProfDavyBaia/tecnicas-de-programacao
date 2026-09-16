@@ -47,15 +47,13 @@ Uma **árvore binária** é uma árvore em que cada nó tem **no máximo dois
 filhos**, chamados de filho esquerdo e filho direito.
 
 ```python
-class No:
-    def __init__(self, valor):
-        self.valor = valor
-        self.esquerda = None
-        self.direita = None
+def criar_no(valor):
+    return {"valor": valor, "esquerda": None, "direita": None}
 ```
 
-Esse `No` é o bloco de construção de praticamente todas as estruturas
-que veremos hoje.
+Esse dicionário é o bloco de construção de praticamente todas as
+estruturas que veremos hoje: cada nó guarda seu valor e referências
+(`None` quando não há filho) para os nós esquerdo e direito.
 
 ## Árvore Binária de Busca (BST)
 
@@ -73,42 +71,38 @@ ordenado, mas com inserção/remoção mais baratas.
 ## Inserção em uma BST
 
 ```python
-class BST:
-    def __init__(self):
-        self.raiz = None
+def inserir(no, valor):
+    if no is None:
+        return criar_no(valor)
+    if valor < no["valor"]:
+        no["esquerda"] = inserir(no["esquerda"], valor)
+    elif valor > no["valor"]:
+        no["direita"] = inserir(no["direita"], valor)
+    return no  # valores duplicados são ignorados
 
-    def inserir(self, valor):
-        self.raiz = self._inserir(self.raiz, valor)
-
-    def _inserir(self, no, valor):
-        if no is None:
-            return No(valor)
-        if valor < no.valor:
-            no.esquerda = self._inserir(no.esquerda, valor)
-        elif valor > no.valor:
-            no.direita = self._inserir(no.direita, valor)
-        return no  # valores duplicados são ignorados
-
-arvore = BST()
+raiz = None
 for v in [50, 30, 70, 20, 40, 60, 80]:
-    arvore.inserir(v)
+    raiz = inserir(raiz, v)
 ```
 
 Cada inserção percorre a árvore do topo até encontrar a posição correta
-— custo proporcional à altura da árvore.
+— custo proporcional à altura da árvore. Note o padrão
+`raiz = inserir(raiz, valor)`: como a função pode criar um nó novo
+quando a árvore está vazia, ela sempre retorna o nó (possivelmente
+novo), e quem chama reatribui `raiz`.
 
 ## Busca em uma BST
 
 ```python
 def buscar(no, valor):
-    if no is None or no.valor == valor:
+    if no is None or no["valor"] == valor:
         return no
-    if valor < no.valor:
-        return buscar(no.esquerda, valor)
-    return buscar(no.direita, valor)
+    if valor < no["valor"]:
+        return buscar(no["esquerda"], valor)
+    return buscar(no["direita"], valor)
 
-resultado = buscar(arvore.raiz, 40)
-print(resultado.valor if resultado else "Não encontrado")  # 40
+resultado = buscar(raiz, 40)
+print(resultado["valor"] if resultado else "Não encontrado")  # 40
 ```
 
 A cada passo, a busca elimina uma subárvore inteira — por isso, em uma
@@ -135,21 +129,21 @@ def pre_ordem(no, resultado=None):
     if resultado is None:
         resultado = []
     if no:
-        resultado.append(no.valor)
-        pre_ordem(no.esquerda, resultado)
-        pre_ordem(no.direita, resultado)
+        resultado.append(no["valor"])
+        pre_ordem(no["esquerda"], resultado)
+        pre_ordem(no["direita"], resultado)
     return resultado
 
 def em_ordem(no, resultado=None):
     if resultado is None:
         resultado = []
     if no:
-        em_ordem(no.esquerda, resultado)
-        resultado.append(no.valor)
-        em_ordem(no.direita, resultado)
+        em_ordem(no["esquerda"], resultado)
+        resultado.append(no["valor"])
+        em_ordem(no["direita"], resultado)
     return resultado
 
-print(em_ordem(arvore.raiz))
+print(em_ordem(raiz))
 # [20, 30, 40, 50, 60, 70, 80] — sempre em ordem crescente
 ```
 
@@ -169,15 +163,15 @@ def em_largura(raiz):
 
     while fila:
         no = fila.popleft()
-        resultado.append(no.valor)
-        if no.esquerda:
-            fila.append(no.esquerda)
-        if no.direita:
-            fila.append(no.direita)
+        resultado.append(no["valor"])
+        if no["esquerda"]:
+            fila.append(no["esquerda"])
+        if no["direita"]:
+            fila.append(no["direita"])
 
     return resultado
 
-print(em_largura(arvore.raiz))
+print(em_largura(raiz))
 # [50, 30, 70, 20, 40, 60, 80] — nível a nível
 ```
 
@@ -212,10 +206,10 @@ inserção/remoção.
 
 Implemente uma BST completa em Python que:
 
-1. Suporte `inserir(valor)` e `buscar(valor)`
+1. Suporte `inserir(no, valor)` e `buscar(no, valor)`
 2. Implemente os três percursos recursivos (pré, em, pós-ordem) e o
    percurso em largura
-3. Adicione um método `altura()` que calcule a altura da árvore
+3. Adicione uma função `altura(no)` que calcule a altura da árvore
    recursivamente
 4. Teste com uma sequência de valores e verifique se o percurso em-ordem
    retorna os valores sempre em ordem crescente
@@ -230,111 +224,89 @@ em largura reaproveita a fila estudada na Aula 02.
 ```python
 from collections import deque
 
-class No:
-    def __init__(self, valor):
-        self.valor = valor
-        self.esquerda = None
-        self.direita = None
+def criar_no(valor):
+    return {"valor": valor, "esquerda": None, "direita": None}
 
-class BST:
-    def __init__(self):
-        self.raiz = None
+def inserir(no, valor):
+    if no is None:
+        return criar_no(valor)
+    if valor < no["valor"]:
+        no["esquerda"] = inserir(no["esquerda"], valor)
+    elif valor > no["valor"]:
+        no["direita"] = inserir(no["direita"], valor)
+    return no
 
-    def inserir(self, valor):
-        self.raiz = self._inserir(self.raiz, valor)
-
-    def _inserir(self, no, valor):
-        if no is None:
-            return No(valor)
-        if valor < no.valor:
-            no.esquerda = self._inserir(no.esquerda, valor)
-        elif valor > no.valor:
-            no.direita = self._inserir(no.direita, valor)
+def buscar(no, valor):
+    if no is None or no["valor"] == valor:
         return no
-
-    def buscar(self, valor):
-        return self._buscar(self.raiz, valor)
-
-    def _buscar(self, no, valor):
-        if no is None or no.valor == valor:
-            return no
-        if valor < no.valor:
-            return self._buscar(no.esquerda, valor)
-        return self._buscar(no.direita, valor)
+    if valor < no["valor"]:
+        return buscar(no["esquerda"], valor)
+    return buscar(no["direita"], valor)
 ```
 
 ## Exercício Final — Gabarito (percursos e altura)
 
 ```python
-    def pre_ordem(self):
+def pre_ordem(no, resultado=None):
+    if resultado is None:
         resultado = []
-        self._pre_ordem(self.raiz, resultado)
-        return resultado
+    if no:
+        resultado.append(no["valor"])
+        pre_ordem(no["esquerda"], resultado)
+        pre_ordem(no["direita"], resultado)
+    return resultado
 
-    def _pre_ordem(self, no, resultado):
-        if no:
-            resultado.append(no.valor)
-            self._pre_ordem(no.esquerda, resultado)
-            self._pre_ordem(no.direita, resultado)
-
-    def em_ordem(self):
+def em_ordem(no, resultado=None):
+    if resultado is None:
         resultado = []
-        self._em_ordem(self.raiz, resultado)
-        return resultado
+    if no:
+        em_ordem(no["esquerda"], resultado)
+        resultado.append(no["valor"])
+        em_ordem(no["direita"], resultado)
+    return resultado
 
-    def _em_ordem(self, no, resultado):
-        if no:
-            self._em_ordem(no.esquerda, resultado)
-            resultado.append(no.valor)
-            self._em_ordem(no.direita, resultado)
-
-    def pos_ordem(self):
+def pos_ordem(no, resultado=None):
+    if resultado is None:
         resultado = []
-        self._pos_ordem(self.raiz, resultado)
-        return resultado
+    if no:
+        pos_ordem(no["esquerda"], resultado)
+        pos_ordem(no["direita"], resultado)
+        resultado.append(no["valor"])
+    return resultado
 
-    def _pos_ordem(self, no, resultado):
-        if no:
-            self._pos_ordem(no.esquerda, resultado)
-            self._pos_ordem(no.direita, resultado)
-            resultado.append(no.valor)
+def em_largura(raiz):
+    if raiz is None:
+        return []
+    fila = deque([raiz])
+    resultado = []
+    while fila:
+        no = fila.popleft()
+        resultado.append(no["valor"])
+        if no["esquerda"]:
+            fila.append(no["esquerda"])
+        if no["direita"]:
+            fila.append(no["direita"])
+    return resultado
 
-    def em_largura(self):
-        if self.raiz is None:
-            return []
-        fila = deque([self.raiz])
-        resultado = []
-        while fila:
-            no = fila.popleft()
-            resultado.append(no.valor)
-            if no.esquerda:
-                fila.append(no.esquerda)
-            if no.direita:
-                fila.append(no.direita)
-        return resultado
-
-    def altura(self):
-        return self._altura(self.raiz)
-
-    def _altura(self, no):
-        if no is None:
-            return -1
-        return 1 + max(self._altura(no.esquerda), self._altura(no.direita))
+def altura(no):
+    if no is None:
+        return -1
+    return 1 + max(altura(no["esquerda"]), altura(no["direita"]))
 ```
 
 ## Exercício Final — Gabarito (teste e saída verificada)
 
 ```python
-arvore = BST()
+raiz = None
 for v in [50, 30, 70, 20, 40, 60, 80, 10]:
-    arvore.inserir(v)
+    raiz = inserir(raiz, v)
 
-print("Pré-ordem:  ", arvore.pre_ordem())
-print("Em-ordem:   ", arvore.em_ordem())
-print("Pós-ordem:  ", arvore.pos_ordem())
-print("Em largura: ", arvore.em_largura())
-print("Altura:     ", arvore.altura())
-print("Em-ordem está crescente?", arvore.em_ordem() == sorted(arvore.em_ordem()))
+print("Pré-ordem:  ", pre_ordem(raiz))
+print("Em-ordem:   ", em_ordem(raiz))
+print("Pós-ordem:  ", pos_ordem(raiz))
+print("Em largura: ", em_largura(raiz))
+print("Altura:     ", altura(raiz))
+print("Em-ordem está crescente?", em_ordem(raiz) == sorted(em_ordem(raiz)))
 ```
 
 Saída verificada:

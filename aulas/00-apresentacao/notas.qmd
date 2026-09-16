@@ -243,3 +243,52 @@ Também testamos o caminho de opção inválida: com a entrada `9`, `1`,
 `2`, `3`, `0`, o programa imprime "Opção inválida" para a opção `9`,
 depois processa normalmente a soma `1 + 2 = 3` na opção `1`, e encerra na
 opção `0`.
+
+### Funções em Python (`def`)
+
+Até agora, todo o código roda de cima para baixo, em um único bloco. Uma
+**função** agrupa um trecho de código, dá um nome a ele, e permite
+reutilizá-lo quantas vezes for preciso — passando informações diferentes
+a cada chamada.
+
+- **`def`** — palavra-chave que inicia a definição de uma função.
+- **Parâmetros** — variáveis que a função recebe como entrada, entre
+  parênteses.
+- **`return`** — devolve um valor para quem chamou a função (sem
+  `return`, a função devolve `None`).
+- **Escopo local** — variáveis criadas dentro da função só existem
+  enquanto ela executa; não "vazam" para fora dela.
+
+```python
+def somar(a, b):
+    resultado = a + b   # variável local: só existe aqui dentro
+    return resultado
+
+print(somar(3, 4))    # 7
+print(somar(10, 5))   # 15
+```
+
+A função `somar` pode ser chamada quantas vezes for necessário, com
+valores diferentes, sem repetir o código de soma a cada vez. Esse é o
+padrão que vamos usar a partir da próxima aula: funções que recebem
+dados (listas, dicionários) como parâmetro e retornam um resultado —
+sem precisar de classes para isso.
+
+### Atividade 5 — Reaproveitando código com uma função
+
+Enunciado: reescreva a Atividade 1 (soma de dois números) usando uma
+função `somar(a, b)` que recebe os dois números e retorna o resultado.
+O programa principal pede os números ao usuário, chama a função e
+mostra o resultado.
+
+Exemplo:
+
+```
+Digite o valor de a: 5
+Digite o valor de b: 3
+A soma de a e b é: 8
+```
+
+Requisitos: usar `def` para criar a função `somar(a, b)`; usar `return`
+para devolver o resultado; chamar a função a partir do programa
+principal, passando os valores lidos do usuário.

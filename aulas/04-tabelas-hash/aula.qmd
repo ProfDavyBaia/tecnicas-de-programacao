@@ -72,37 +72,36 @@ de pares chave-valor. Em caso de colisão, o novo par é simplesmente
 adicionado à lista daquela posição.
 
 ```python
-class TabelaHashEncadeada:
-    def __init__(self, capacidade=8):
-        self.capacidade = capacidade
-        self.buckets = [[] for _ in range(capacidade)]
+def criar_tabela_encadeada(capacidade=8):
+    return {"capacidade": capacidade, "buckets": [[] for _ in range(capacidade)]}
 
-    def _indice(self, chave):
-        return hash(chave) % self.capacidade
+def _indice(tabela, chave):
+    return hash(chave) % tabela["capacidade"]
 
-    def inserir(self, chave, valor):
-        indice = self._indice(chave)
-        for i, (k, _) in enumerate(self.buckets[indice]):
-            if k == chave:
-                self.buckets[indice][i] = (chave, valor)
-                return
-        self.buckets[indice].append((chave, valor))
+def inserir(tabela, chave, valor):
+    indice = _indice(tabela, chave)
+    bucket = tabela["buckets"][indice]
+    for i, (k, _) in enumerate(bucket):
+        if k == chave:
+            bucket[i] = (chave, valor)
+            return
+    bucket.append((chave, valor))
 ```
 
 ## Tratamento de Colisões: Encadeamento (busca)
 
 ```python
-    def buscar(self, chave):
-        indice = self._indice(chave)
-        for k, v in self.buckets[indice]:
-            if k == chave:
-                return v
-        raise KeyError(chave)
+def buscar(tabela, chave):
+    indice = _indice(tabela, chave)
+    for k, v in tabela["buckets"][indice]:
+        if k == chave:
+            return v
+    raise KeyError(chave)
 
-t = TabelaHashEncadeada()
-t.inserir("temperatura", 25.4)
-t.inserir("umidade", 60)
-print(t.buscar("temperatura"))  # 25.4
+t = criar_tabela_encadeada()
+inserir(t, "temperatura", 25.4)
+inserir(t, "umidade", 60)
+print(buscar(t, "temperatura"))  # 25.4
 ```
 
 Se muitas chaves colidirem na mesma posição, a lista daquele bucket cresce
@@ -222,76 +221,75 @@ quando redimensionar. Em Python, `dict` já resolve tudo isso.
 ## Exercício Final — Gabarito
 
 ```python
-class TabelaHash:
-    def __init__(self, capacidade=4):
-        self.capacidade = capacidade
-        self.tamanho = 0
-        self.buckets = [[] for _ in range(capacidade)]
+def criar_tabela(capacidade=4):
+    return {"capacidade": capacidade, "tamanho": 0, "buckets": [[] for _ in range(capacidade)]}
 
-    def _indice(self, chave, capacidade=None):
-        capacidade = capacidade or self.capacidade
-        return hash(chave) % capacidade
+def _indice(tabela, chave, capacidade=None):
+    capacidade = capacidade or tabela["capacidade"]
+    return hash(chave) % capacidade
 
-    def fator_de_carga(self):
-        return self.tamanho / self.capacidade
+def fator_de_carga(tabela):
+    return tabela["tamanho"] / tabela["capacidade"]
 
-    def inserir(self, chave, valor):
-        indice = self._indice(chave)
-        for i, (k, _) in enumerate(self.buckets[indice]):
-            if k == chave:
-                self.buckets[indice][i] = (chave, valor)
-                return
-        self.buckets[indice].append((chave, valor))
-        self.tamanho += 1
-        if self.fator_de_carga() > 0.7:
-            self._redimensionar()
+def inserir(tabela, chave, valor):
+    indice = _indice(tabela, chave)
+    bucket = tabela["buckets"][indice]
+    for i, (k, _) in enumerate(bucket):
+        if k == chave:
+            bucket[i] = (chave, valor)
+            return
+    bucket.append((chave, valor))
+    tabela["tamanho"] += 1
+    if fator_de_carga(tabela) > 0.7:
+        _redimensionar(tabela)
 ```
 
 ## Exercício Final — Gabarito (buscar, remover, redimensionar)
 
 ```python
-    def buscar(self, chave):
-        indice = self._indice(chave)
-        for k, v in self.buckets[indice]:
-            if k == chave:
-                return v
-        raise KeyError(chave)
+def buscar(tabela, chave):
+    indice = _indice(tabela, chave)
+    for k, v in tabela["buckets"][indice]:
+        if k == chave:
+            return v
+    raise KeyError(chave)
 
-    def remover(self, chave):
-        indice = self._indice(chave)
-        bucket = self.buckets[indice]
-        for i, (k, _) in enumerate(bucket):
-            if k == chave:
-                del bucket[i]
-                self.tamanho -= 1
-                return
-        raise KeyError(chave)
+def remover(tabela, chave):
+    indice = _indice(tabela, chave)
+    bucket = tabela["buckets"][indice]
+    for i, (k, _) in enumerate(bucket):
+        if k == chave:
+            del bucket[i]
+            tabela["tamanho"] -= 1
+            return
+    raise KeyError(chave)
 
-    def _redimensionar(self):
-        nova_capacidade = self.capacidade * 2
-        novos_buckets = [[] for _ in range(nova_capacidade)]
-        for bucket in self.buckets:
-            for chave, valor in bucket:
-                indice = self._indice(chave, nova_capacidade)
-                novos_buckets[indice].append((chave, valor))
-        self.capacidade = nova_capacidade
-        self.buckets = novos_buckets
+def _redimensionar(tabela):
+    nova_capacidade = tabela["capacidade"] * 2
+    novos_buckets = [[] for _ in range(nova_capacidade)]
+    for bucket in tabela["buckets"]:
+        for chave, valor in bucket:
+            indice = _indice(tabela, chave, nova_capacidade)
+            novos_buckets[indice].append((chave, valor))
+    tabela["capacidade"] = nova_capacidade
+    tabela["buckets"] = novos_buckets
 ```
 
 ## Exercício Final — Gabarito (teste e saída verificada)
 
 ```python
-t = TabelaHash(capacidade=4)
+t = criar_tabela(capacidade=4)
 chaves = ["temperatura", "umidade", "pressao", "luminosidade", "vento"]
 for i, chave in enumerate(chaves):
-    t.inserir(chave, i * 10)
-    print(f"Após inserir '{chave}': tamanho={t.tamanho}, "
-          f"capacidade={t.capacidade}, "
-          f"fator de carga={t.fator_de_carga():.2f}")
+    inserir(t, chave, i * 10)
+    tamanho = t["tamanho"]
+    capacidade = t["capacidade"]
+    fc = fator_de_carga(t)
+    print(f"Após inserir '{chave}': tamanho={tamanho}, capacidade={capacidade}, fator de carga={fc:.2f}")
 
-print("Buscar 'pressao':", t.buscar("pressao"))
-t.remover("umidade")
-print("Após remover 'umidade', tamanho:", t.tamanho)
+print("Buscar 'pressao':", buscar(t, "pressao"))
+remover(t, "umidade")
+print("Após remover 'umidade', tamanho:", t["tamanho"])
 ```
 
 Saída verificada:
