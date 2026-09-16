@@ -1,0 +1,268 @@
+---
+title: "Notas — Aula 02: Filas na Prática — BFS, Filas de Prioridade e Escalonamento"
+---
+
+## Recapitulando
+
+Na Aula 01 vimos que uma fila segue o princípio FIFO: `enqueue` insere no
+fim e `dequeue` remove do início, ambas as operações em O(1) quando
+usamos `collections.deque`. Nesta aula, a fila passa a ser uma
+**ferramenta** para resolver problemas maiores — percorrer grafos,
+priorizar tarefas e simular escalonadores de sistemas operacionais.
+
+## Busca em Largura (BFS)
+
+**BFS — Breadth-First Search** percorre um grafo ou uma árvore **nível a
+nível**: visita todos os vizinhos diretos de um nó antes de avançar para
+os vizinhos dos vizinhos. É o algoritmo canônico que usa fila como
+estrutura de apoio — cada nó descoberto é enfileirado, e o algoritmo
+processa a fila em ordem de descoberta.
+
+Propriedades importantes do BFS:
+
+- Encontra o **menor caminho** em número de saltos em grafos não
+  ponderados.
+- Explora a rede "em camadas" a partir de um nó de origem.
+- Precisa de um conjunto de **nós visitados** para não reprocessar nós já
+  descobertos (evitando laços infinitos em grafos com ciclos).
+
+### Algoritmo
+
+1. Enfileire o nó de origem e marque-o como visitado.
+2. Enquanto a fila não estiver vazia:
+   1. Remova o nó da frente da fila.
+   2. Para cada vizinho não visitado, marque-o como visitado e
+      enfileire-o.
+3. Repita até a fila esvaziar.
+
+O uso da fila (e não de uma pilha) é o que garante a ordem correta: os
+nós mais próximos da origem são sempre processados antes dos mais
+distantes. Se trocássemos a fila por uma pilha, obteríamos uma busca em
+profundidade (DFS), com uma ordem de exploração bem diferente.
+
+### Implementação em Python
+
+```python
+from collections import deque
+
+def bfs(grafo, origem):
+    visitados = {origem}
+    fila = deque([origem])
+    ordem_visita = []
+
+    while fila:
+        atual = fila.popleft()
+        ordem_visita.append(atual)
+        for vizinho in grafo[atual]:
+            if vizinho not in visitados:
+                visitados.add(vizinho)
+                fila.append(vizinho)
+
+    return ordem_visita
+
+grafo = {
+    "A": ["B", "C"],
+    "B": ["A", "D"],
+    "C": ["A", "D"],
+    "D": ["B", "C", "E"],
+    "E": ["D"],
+}
+print(bfs(grafo, "A"))  # ['A', 'B', 'C', 'D', 'E']
+```
+
+### Aplicações em engenharia
+
+- **Roteamento de redes** — protocolos como OSPF usam variações de BFS
+  para calcular o menor caminho, em número de saltos, entre roteadores.
+- **Topologia de redes elétricas** — identificar a distância, em número
+  de conexões, entre subestações e pontos de consumo.
+- **Análise de circuitos** — percorrer um circuito representado como
+  grafo para identificar quais componentes são alcançáveis a partir de um
+  nó.
+- **Web crawling e redes sociais** — explorar conexões a partir de um nó
+  de origem, camada por camada.
+
+## Filas de prioridade
+
+Uma **fila de prioridade** relaxa o princípio FIFO: cada elemento tem uma
+prioridade associada, e o `dequeue` sempre retira o elemento de maior
+prioridade (ou de menor valor numérico, dependendo da convenção adotada),
+não necessariamente o mais antigo.
+
+Python implementa isso de forma eficiente com o módulo `heapq`, que
+mantém uma lista organizada como **heap binário mínimo**: inserção e
+remoção custam O(log n), muito melhor do que manter a lista sempre
+ordenada (que custaria O(n) por inserção).
+
+```python
+import heapq
+
+fila_prioridade = []
+heapq.heappush(fila_prioridade, (2, "Tarefa B"))
+heapq.heappush(fila_prioridade, (1, "Tarefa A"))
+heapq.heappush(fila_prioridade, (3, "Tarefa C"))
+
+while fila_prioridade:
+    prioridade, tarefa = heapq.heappop(fila_prioridade)
+    print(prioridade, tarefa)
+# 1 Tarefa A
+# 2 Tarefa B
+# 3 Tarefa C
+```
+
+### Escalonador de tarefas
+
+Retomando o desafio proposto ao final da Aula 01 — um escalonador que
+sempre executa a tarefa de maior prioridade (menor número) primeiro,
+usando um contador para desempatar tarefas de mesma prioridade pela
+ordem de chegada:
+
+```python
+import heapq
+
+def criar_escalonador():
+    return {"fila": [], "contador": 0}  # contador: desempate por ordem de chegada
+
+def adicionar(escalonador, prioridade, tarefa):
+    heapq.heappush(escalonador["fila"], (prioridade, escalonador["contador"], tarefa))
+    escalonador["contador"] += 1
+
+def executar_proxima(escalonador):
+    if not escalonador["fila"]:
+        return None
+    _, _, tarefa = heapq.heappop(escalonador["fila"])
+    return tarefa
+
+e = criar_escalonador()
+adicionar(e, 2, "Ler sensor")
+adicionar(e, 1, "Tratar interrupção crítica")
+adicionar(e, 3, "Enviar log")
+print(executar_proxima(e))  # Tratar interrupção crítica
+```
+
+## Escalonamento round-robin
+
+O **round-robin** é usado em sistemas operacionais e sistemas de tempo
+real (RTOS) para dividir o tempo de CPU igualmente entre processos. Cada
+processo recebe uma fatia de tempo fixa (*quantum*/*time slice*); ao
+final dela, se o processo ainda não terminou, ele volta para o **fim da
+fila** — uma fila circular simples resolve esse comportamento
+naturalmente.
+
+Regras do algoritmo:
+
+- Cada processo é enfileirado uma vez, com seu tempo total de execução
+  restante.
+- O processo na frente da fila executa por, no máximo, um *quantum*.
+- Se ainda restar tempo de execução, o processo é reenfileirado no fim.
+- Se o processo terminou (tempo restante chega a zero), ele é removido
+  definitivamente.
+
+### Simulação em Python
+
+```python
+from collections import deque
+
+def round_robin(processos, quantum):
+    fila = deque(processos)  # cada processo: (nome, tempo_restante)
+    log = []
+
+    while fila:
+        nome, restante = fila.popleft()
+        executado = min(quantum, restante)
+        restante -= executado
+        log.append(f"{nome} executou {executado}")
+
+        if restante > 0:
+            fila.append((nome, restante))  # volta pro fim da fila
+
+    return log
+
+processos = [("P1", 5), ("P2", 3), ("P3", 8)]
+for linha in round_robin(processos, quantum=4):
+    print(linha)
+# P1 executou 4
+# P2 executou 3
+# P3 executou 4
+# P1 executou 1
+# P3 executou 4
+```
+
+## Comparativo: quando usar cada fila
+
+| Estrutura | Ordem de saída | Uso típico |
+|---|---|---|
+| Fila simples (`deque`) | FIFO | BFS, buffers, filas de atendimento |
+| Fila de prioridade (`heapq`) | Maior prioridade primeiro | Escalonadores, algoritmos gulosos (ex.: Dijkstra) |
+| Fila circular / round-robin | FIFO com reinserção | Compartilhamento de CPU, streaming de dados |
+
+## Exercício final
+
+Implemente um simulador de **atendimento com prioridade** (por exemplo,
+um pronto-socorro ou um suporte técnico):
+
+1. Pacientes ou chamados chegam com uma prioridade (1 = mais urgente).
+2. Uma fila de prioridade decide quem é atendido a seguir.
+3. Registre, com uma pilha (revisitando a Aula 01), o histórico de
+   atendimentos já concluídos.
+4. Ao final, imprima a ordem de atendimento e o histórico completo.
+
+**Resumo da aula:** BFS percorre grafos em camadas usando uma fila
+simples; filas de prioridade (`heapq`) resolvem problemas de
+escalonamento por importância; round-robin usa a fila circular para
+dividir o tempo de CPU igualmente entre processos.
+
+## Gabarito do exercício final
+
+Uma fila de prioridade decide quem é atendido a seguir; uma pilha (aqui,
+simplesmente a lista guardada em `atendimento["historico"]`, usada apenas
+com `append`) registra os atendimentos já concluídos, na ordem em que
+aconteceram.
+
+```python
+import heapq
+
+def criar_atendimento():
+    return {"fila": [], "contador": 0, "historico": []}  # historico: pilha de atendimentos concluídos
+
+def chegar(atendimento, prioridade, nome):
+    heapq.heappush(atendimento["fila"], (prioridade, atendimento["contador"], nome))
+    atendimento["contador"] += 1
+
+def atender_proximo(atendimento):
+    if not atendimento["fila"]:
+        return None
+    _, _, nome = heapq.heappop(atendimento["fila"])
+    atendimento["historico"].append(nome)
+    return nome
+```
+
+Uso e saída verificada:
+
+```python
+pronto_socorro = criar_atendimento()
+chegar(pronto_socorro, 3, "Maria (dor leve)")
+chegar(pronto_socorro, 1, "João (dor no peito)")
+chegar(pronto_socorro, 2, "Ana (fratura)")
+chegar(pronto_socorro, 1, "Pedro (trauma grave)")
+
+while True:
+    paciente = atender_proximo(pronto_socorro)
+    if paciente is None:
+        break
+    print("-", paciente)
+
+print("Histórico:", pronto_socorro["historico"])
+```
+
+```
+- João (dor no peito)
+- Pedro (trauma grave)
+- Ana (fratura)
+- Maria (dor leve)
+Histórico: ['João (dor no peito)', 'Pedro (trauma grave)', 'Ana (fratura)', 'Maria (dor leve)']
+```
+
+Repare que João e Pedro têm a mesma prioridade (1); como João chegou
+primeiro (contador menor), é atendido primeiro — o mesmo padrão de
+desempate por ordem de chegada usado no escalonador da Aula 01.

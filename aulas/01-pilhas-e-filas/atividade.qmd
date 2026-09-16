@@ -1,0 +1,32 @@
+---
+title: "Atividade — Aula 01: Pilhas e Filas"
+---
+
+## Desafio prático: escalonador de tarefas com histórico
+
+Implemente em Python um simulador de escalonador de tarefas para um
+microcontrolador que:
+
+1. Usa uma **fila de prioridade** para gerenciar tarefas com prioridades
+   diferentes (menor número = mais urgente).
+2. Usa uma **pilha** para registrar o histórico de execuções (log) — a
+   cada tarefa executada, ela é empilhada no histórico.
+3. Permite **desfazer (undo)** a última tarefa executada, removendo-a do
+   topo da pilha de histórico.
+
+**Requisitos:**
+
+- Um conjunto de funções que permita adicionar tarefas com prioridade e
+  nome (o estado do escalonador pode ser guardado em um dicionário,
+  passado como parâmetro para cada função).
+- Uma função que execute e retorne sempre a tarefa de maior prioridade
+  disponível (menor número), desempatando por ordem de chegada quando
+  duas tarefas têm a mesma prioridade.
+- Uma função que desfaça a última execução, retornando a tarefa removida
+  do histórico.
+
+Teste com pelo menos 5 tarefas de prioridades diferentes (incluindo um
+empate de prioridade entre duas delas) e imprima a ordem de execução, o
+histórico após algumas execuções, e o resultado de desfazer a última.
+
+Confira o [gabarito](gabarito.qmd) depois de tentar resolver.

@@ -64,7 +64,9 @@ A participação nos encontros síncronos também é considerada.
 ## Revisão de lógica de programação
 
 A partir de agora, revisão dos fundamentos de Python: entrada de dados,
-condicionais e laços de repetição.
+condicionais e laços de repetição. Cada atividade traz o enunciado, um
+exemplo de execução e o **gabarito** — o código Python completo e
+testado.
 
 ## Atividade 1 — Soma de dois números
 
@@ -74,7 +76,26 @@ Crie um programa em Python que:
 - Calcule a soma desses números
 - Mostre o resultado na tela
 
+Exemplo de execução:
+
+```
+Digite o valor de a: 5
+Digite o valor de b: 3
+A soma de a e b é: 8
+```
+
+## Atividade 1 — Gabarito
+
 ```python
+a = int(input("Digite o valor de a: "))
+b = int(input("Digite o valor de b: "))
+soma = a + b
+print(f"A soma de a e b é: {soma}")
+```
+
+Saída verificada (entrada `5`, `3`):
+
+```
 Digite o valor de a: 5
 Digite o valor de b: 3
 A soma de a e b é: 8
@@ -82,7 +103,34 @@ A soma de a e b é: 8
 
 ## Atividade 1 — variação com menu
 
+Adapte o programa para perguntar a operação desejada antes de calcular:
+
+```
+Digite o valor de a: 10
+Digite o valor de b: 4
+1 - Soma
+2 - Subtração
+Escolha uma operação: 2
+Resultado da subtração: 6
+```
+
+## Atividade 1 (variação) — Gabarito
+
 ```python
+a = int(input("Digite o valor de a: "))
+b = int(input("Digite o valor de b: "))
+print("1 - Soma")
+print("2 - Subtração")
+op = int(input("Escolha uma operação: "))
+if op == 1:
+    print(f"Resultado da soma: {a + b}")
+elif op == 2:
+    print(f"Resultado da subtração: {a - b}")
+```
+
+Saída verificada (entrada `10`, `4`, `2`):
+
+```
 Digite o valor de a: 10
 Digite o valor de b: 4
 1 - Soma
@@ -99,7 +147,9 @@ Desenvolva um programa que:
 - Utilize `for` para receber cada número e acumular a soma
 - Apresente o resultado final
 
-```python
+Exemplo de execução:
+
+```
 Quantos números você deseja somar? 3
 Digite o 1º número: 10
 Digite o 2º número: 5
@@ -110,6 +160,27 @@ A soma de todos os números é: 17
 **Requisitos:** usar `for`; permitir escolher a quantidade de números;
 armazenar a soma em uma variável acumuladora.
 
+## Atividade 2 — Gabarito
+
+```python
+n = int(input("Quantos números você deseja somar? "))
+soma = 0
+for i in range(1, n + 1):
+    numero = int(input(f"Digite o {i}º número: "))
+    soma += numero
+print(f"A soma de todos os números é: {soma}")
+```
+
+Saída verificada (entrada `3`, `10`, `5`, `2`):
+
+```
+Quantos números você deseja somar? 3
+Digite o 1º número: 10
+Digite o 2º número: 5
+Digite o 3º número: 2
+A soma de todos os números é: 17
+```
+
 ## Atividade 3 — Pares e ímpares
 
 - Pergunte quantos números o usuário deseja informar
@@ -117,17 +188,41 @@ armazenar a soma em uma variável acumuladora.
 - Para cada número, use `if`/`else` para indicar se é par ou ímpar
 - Ao final, mostre o total de pares e ímpares
 
+💡 Dica: um número é par quando o resto da divisão por 2 é igual a zero.
+
+## Atividade 3 — Gabarito
+
 ```python
+n = int(input("Quantos números deseja informar? "))
+pares = 0
+impares = 0
+for i in range(1, n + 1):
+    numero = int(input(f"Digite o {i}º número: "))
+    if numero % 2 == 0:
+        print(f"{numero} é par.")
+        pares += 1
+    else:
+        print(f"{numero} é ímpar.")
+        impares += 1
+print(f"Quantidade de números pares: {pares}")
+print(f"Quantidade de números ímpares: {impares}")
+```
+
+Saída verificada (entrada `4`, `10`, `7`, `4`, `9`):
+
+```
 Quantos números deseja informar? 4
-Digite o 1º número: 10 → 10 é par.
-Digite o 2º número: 7  → 7 é ímpar.
-Digite o 3º número: 4  → 4 é par.
-Digite o 4º número: 9  → 9 é ímpar.
+Digite o 1º número: 10
+10 é par.
+Digite o 2º número: 7
+7 é ímpar.
+Digite o 3º número: 4
+4 é par.
+Digite o 4º número: 9
+9 é ímpar.
 Quantidade de números pares: 2
 Quantidade de números ímpares: 2
 ```
-
-💡 Dica: um número é par quando o resto da divisão por 2 é igual a zero.
 
 ## Atividade 4 — Calculadora com menu
 
@@ -146,34 +241,62 @@ sair:
 - Encerra somente quando a opção `0` for escolhida
 - Opção inválida → exibe "Opção inválida" e mostra o menu novamente
 
-## Atividade 4 — exemplos de execução
+## Atividade 4 — Gabarito
 
 ```python
+while True:
+    print("1 - Somar")
+    print("2 - Subtrair")
+    print("3 - Multiplicar")
+    print("0 - Sair")
+    opcao = int(input("Escolha uma opção: "))
+
+    if opcao == 0:
+        print("Programa encerrado.")
+        break
+    elif opcao in (1, 2, 3):
+        a = int(input("Digite o primeiro número: "))
+        b = int(input("Digite o segundo número: "))
+        if opcao == 1:
+            resultado = a + b
+        elif opcao == 2:
+            resultado = a - b
+        else:
+            resultado = a * b
+        print(f"Resultado: {resultado}")
+    else:
+        print("Opção inválida")
+```
+
+## Atividade 4 — Saída Verificada
+
+Entrada: `1`, `10`, `5`, `3`, `4`, `5`, `0` (soma, depois multiplicação,
+depois sai):
+
+```
+1 - Somar
+2 - Subtrair
+3 - Multiplicar
+0 - Sair
 Escolha uma opção: 1
 Digite o primeiro número: 10
 Digite o segundo número: 5
 Resultado: 15
-```
-
-```python
+1 - Somar
+2 - Subtrair
+3 - Multiplicar
+0 - Sair
 Escolha uma opção: 3
 Digite o primeiro número: 4
 Digite o segundo número: 5
 Resultado: 20
-```
-
-```python
+1 - Somar
+2 - Subtrair
+3 - Multiplicar
+0 - Sair
 Escolha uma opção: 0
 Programa encerrado.
 ```
-
-## Atividade 4 — requisitos
-
-- Usar variáveis para armazenar números, opção e resultado
-- Usar `while` para repetir o menu
-- Usar `if` / `elif` / `else` para tratar a opção escolhida
-- Mostrar o resultado de cada operação
-- Encerrar somente quando a opção `0` for escolhida
 
 ## Obrigado
 

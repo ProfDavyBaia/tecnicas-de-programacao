@@ -1,0 +1,65 @@
+---
+title: "Gabarito — Aula 02: Filas na Prática"
+---
+
+Solução da [atividade desta aula](atividade.qmd). O código abaixo foi
+executado e a saída mostrada é exatamente o que o Python produz.
+
+## Simulador de atendimento com prioridade
+
+Uma fila de prioridade decide quem é atendido a seguir; uma pilha (aqui,
+simplesmente a lista guardada em `atendimento["historico"]`, usada apenas
+com `append`) registra os atendimentos já concluídos, na ordem em que
+aconteceram.
+
+```python
+import heapq
+
+def criar_atendimento():
+    return {"fila": [], "contador": 0, "historico": []}  # historico: pilha de atendimentos concluídos
+
+def chegar(atendimento, prioridade, nome):
+    heapq.heappush(atendimento["fila"], (prioridade, atendimento["contador"], nome))
+    atendimento["contador"] += 1
+
+def atender_proximo(atendimento):
+    if not atendimento["fila"]:
+        return None
+    _, _, nome = heapq.heappop(atendimento["fila"])
+    atendimento["historico"].append(nome)
+    return nome
+```
+
+## Teste e saída verificada
+
+```python
+pronto_socorro = criar_atendimento()
+chegar(pronto_socorro, 3, "Maria (dor leve)")
+chegar(pronto_socorro, 1, "João (dor no peito)")
+chegar(pronto_socorro, 2, "Ana (fratura)")
+chegar(pronto_socorro, 1, "Pedro (trauma grave)")
+
+print("Ordem de atendimento:")
+while True:
+    paciente = atender_proximo(pronto_socorro)
+    if paciente is None:
+        break
+    print("-", paciente)
+
+print("Histórico:", pronto_socorro["historico"])
+```
+
+Saída verificada:
+
+```
+Ordem de atendimento:
+- João (dor no peito)
+- Pedro (trauma grave)
+- Ana (fratura)
+- Maria (dor leve)
+Histórico: ['João (dor no peito)', 'Pedro (trauma grave)', 'Ana (fratura)', 'Maria (dor leve)']
+```
+
+Repare que João e Pedro têm a mesma prioridade (1); como João chegou
+primeiro (contador menor), é atendido primeiro — o mesmo padrão de
+desempate por ordem de chegada usado no escalonador da Aula 01.

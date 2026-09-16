@@ -1,0 +1,347 @@
+---
+title: "Notas — Aula 03: Árvores"
+---
+
+## O que é uma árvore
+
+Uma **árvore** é uma estrutura de dados **hierárquica**: diferente de
+pilhas e filas, que são lineares, cada elemento de uma árvore pode ter
+múltiplos "sucessores", formando relações de pai e filho. É a estrutura
+natural para representar hierarquias — sistemas de arquivos, organogramas,
+árvores de decisão, entre outros.
+
+Terminologia básica:
+
+- **Raiz** — o nó do topo da árvore, que não tem pai.
+- **Nó (node)** — cada elemento da árvore.
+- **Filho / pai** — a relação direta entre dois nós conectados.
+- **Folha** — um nó sem filhos.
+- **Subárvore** — uma árvore contida dentro de outra, a partir de um nó
+  qualquer.
+
+### Altura e profundidade
+
+- **Profundidade de um nó** é o número de arestas percorridas da raiz até
+  esse nó.
+- **Altura da árvore** é a profundidade do nó mais distante da raiz.
+- Uma árvore com $n$ nós **balanceada** tem altura O(log n); uma árvore
+  **degenerada** (equivalente a uma lista encadeada) tem altura O(n).
+
+A altura determina diretamente o custo das operações de busca, inserção
+e remoção — é a métrica mais importante para analisar a eficiência de uma
+árvore.
+
+## Árvore binária
+
+Uma **árvore binária** é uma árvore em que cada nó tem, no máximo, dois
+filhos, chamados de filho esquerdo e filho direito:
+
+```python
+class No:
+    def __init__(self, valor):
+        self.valor = valor
+        self.esquerda = None
+        self.direita = None
+```
+
+Esse `No` é o bloco de construção de praticamente todas as estruturas
+vistas nesta aula.
+
+## Árvore Binária de Busca (BST)
+
+Uma **Árvore Binária de Busca (BST — Binary Search Tree)** impõe uma
+regra de ordenação em cada nó: para todo nó, todos os valores da
+subárvore esquerda são menores, e todos os valores da subárvore direita
+são maiores que o valor do nó.
+
+Essa propriedade é o que torna a busca eficiente: a cada comparação,
+metade da árvore é descartada — de forma parecida com uma busca binária
+em um array ordenado, mas com a vantagem de inserção e remoção mais
+baratas (não é preciso deslocar elementos).
+
+### Inserção
+
+```python
+class BST:
+    def __init__(self):
+        self.raiz = None
+
+    def inserir(self, valor):
+        self.raiz = self._inserir(self.raiz, valor)
+
+    def _inserir(self, no, valor):
+        if no is None:
+            return No(valor)
+        if valor < no.valor:
+            no.esquerda = self._inserir(no.esquerda, valor)
+        elif valor > no.valor:
+            no.direita = self._inserir(no.direita, valor)
+        return no  # valores duplicados são ignorados
+
+arvore = BST()
+for v in [50, 30, 70, 20, 40, 60, 80]:
+    arvore.inserir(v)
+```
+
+Cada inserção percorre a árvore do topo até encontrar a posição correta
+para o novo valor — o custo é proporcional à altura da árvore.
+
+### Busca
+
+```python
+def buscar(no, valor):
+    if no is None or no.valor == valor:
+        return no
+    if valor < no.valor:
+        return buscar(no.esquerda, valor)
+    return buscar(no.direita, valor)
+
+resultado = buscar(arvore.raiz, 40)
+print(resultado.valor if resultado else "Não encontrado")  # 40
+```
+
+A cada passo, a busca elimina uma subárvore inteira do espaço de busca —
+por isso, em uma árvore balanceada, encontrar qualquer valor custa apenas
+O(log n) comparações.
+
+## Percursos em árvores
+
+**Percorrer** uma árvore significa visitar todos os seus nós em uma
+ordem definida. Os três percursos recursivos clássicos diferem apenas em
+quando o nó atual é visitado em relação às suas subárvores:
+
+- **Pré-ordem** — visita o nó, depois a subárvore esquerda, depois a
+  direita.
+- **Em-ordem** — visita a subárvore esquerda, depois o nó, depois a
+  direita.
+- **Pós-ordem** — visita a subárvore esquerda, depois a direita, depois
+  o nó.
+
+Em uma BST, o percurso em-ordem sempre visita os valores em ordem
+crescente — uma forma elegante de obter uma lista ordenada a partir da
+árvore.
+
+```python
+def pre_ordem(no, resultado=None):
+    if resultado is None:
+        resultado = []
+    if no:
+        resultado.append(no.valor)
+        pre_ordem(no.esquerda, resultado)
+        pre_ordem(no.direita, resultado)
+    return resultado
+
+def em_ordem(no, resultado=None):
+    if resultado is None:
+        resultado = []
+    if no:
+        em_ordem(no.esquerda, resultado)
+        resultado.append(no.valor)
+        em_ordem(no.direita, resultado)
+    return resultado
+
+print(em_ordem(arvore.raiz))
+# [20, 30, 40, 50, 60, 70, 80] — sempre em ordem crescente
+```
+
+### Percurso em largura (BFS em árvores)
+
+O mesmo algoritmo de BFS estudado na Aula 02 para grafos se aplica
+diretamente a árvores, usando uma fila para visitar os nós nível a nível:
+
+```python
+from collections import deque
+
+def em_largura(raiz):
+    if raiz is None:
+        return []
+    fila = deque([raiz])
+    resultado = []
+
+    while fila:
+        no = fila.popleft()
+        resultado.append(no.valor)
+        if no.esquerda:
+            fila.append(no.esquerda)
+        if no.direita:
+            fila.append(no.direita)
+
+    return resultado
+
+print(em_largura(arvore.raiz))
+# [50, 30, 70, 20, 40, 60, 80] — nível a nível
+```
+
+## Complexidade
+
+| Operação | Árvore balanceada | Árvore degenerada (pior caso) |
+|---|---|---|
+| Busca | O(log n) | O(n) |
+| Inserção | O(log n) | O(n) |
+| Percurso completo | O(n) | O(n) |
+
+Uma BST comum **não garante** balanceamento: inserir valores já ordenados
+(por exemplo, 1, 2, 3, 4, 5...) degenera a árvore em uma estrutura
+equivalente a uma lista encadeada, perdendo toda a vantagem do O(log n).
+Estruturas mais avançadas, como **árvores AVL** e **árvores
+rubro-negras**, resolvem esse problema rebalanceando automaticamente a
+árvore a cada inserção ou remoção — ficam para um estudo posterior.
+
+## Aplicações em engenharia
+
+- **Sistemas de arquivos** — diretórios e subdiretórios formam
+  naturalmente uma estrutura em árvore.
+- **Árvores de decisão** — usadas em sistemas de controle e em
+  aprendizado de máquina para tarefas de classificação.
+- **Roteamento IP (tries)** — tabelas de roteamento usam árvores de
+  prefixos para encontrar a rota mais específica rapidamente.
+- **Compressão de dados (Huffman)** — constrói uma árvore binária em que
+  os símbolos mais frequentes ficam mais próximos da raiz, minimizando o
+  número médio de bits por símbolo.
+- **Expressões aritméticas** — compiladores representam expressões como
+  árvores sintáticas para avaliação e otimização de código.
+
+## Exercício final
+
+Implemente uma BST completa em Python que:
+
+1. Suporte `inserir(valor)` e `buscar(valor)`.
+2. Implemente os três percursos recursivos (pré-ordem, em-ordem,
+   pós-ordem) e o percurso em largura.
+3. Adicione um método `altura()` que calcule a altura da árvore
+   recursivamente.
+4. Teste com uma sequência de valores e verifique se o percurso em-ordem
+   sempre retorna os valores em ordem crescente.
+
+**Resumo da aula:** árvores organizam dados hierarquicamente; a BST
+mantém uma propriedade de ordenação que acelera buscas para O(log n)
+quando a árvore está balanceada; os três percursos recursivos definem a
+ordem de visita dos nós, e o percurso em largura reaproveita a fila
+estudada na Aula 02.
+
+## Gabarito do exercício final
+
+A classe abaixo reúne tudo o que vimos na aula em uma única BST: inserção,
+busca, os três percursos recursivos, o percurso em largura e um método de
+`altura()` calculado recursivamente (a altura de uma folha é 0; a de uma
+árvore vazia, por convenção, é -1).
+
+```python
+from collections import deque
+
+class No:
+    def __init__(self, valor):
+        self.valor = valor
+        self.esquerda = None
+        self.direita = None
+
+class BST:
+    def __init__(self):
+        self.raiz = None
+
+    def inserir(self, valor):
+        self.raiz = self._inserir(self.raiz, valor)
+
+    def _inserir(self, no, valor):
+        if no is None:
+            return No(valor)
+        if valor < no.valor:
+            no.esquerda = self._inserir(no.esquerda, valor)
+        elif valor > no.valor:
+            no.direita = self._inserir(no.direita, valor)
+        return no
+
+    def buscar(self, valor):
+        return self._buscar(self.raiz, valor)
+
+    def _buscar(self, no, valor):
+        if no is None or no.valor == valor:
+            return no
+        if valor < no.valor:
+            return self._buscar(no.esquerda, valor)
+        return self._buscar(no.direita, valor)
+
+    def pre_ordem(self):
+        resultado = []
+        self._pre_ordem(self.raiz, resultado)
+        return resultado
+
+    def _pre_ordem(self, no, resultado):
+        if no:
+            resultado.append(no.valor)
+            self._pre_ordem(no.esquerda, resultado)
+            self._pre_ordem(no.direita, resultado)
+
+    def em_ordem(self):
+        resultado = []
+        self._em_ordem(self.raiz, resultado)
+        return resultado
+
+    def _em_ordem(self, no, resultado):
+        if no:
+            self._em_ordem(no.esquerda, resultado)
+            resultado.append(no.valor)
+            self._em_ordem(no.direita, resultado)
+
+    def pos_ordem(self):
+        resultado = []
+        self._pos_ordem(self.raiz, resultado)
+        return resultado
+
+    def _pos_ordem(self, no, resultado):
+        if no:
+            self._pos_ordem(no.esquerda, resultado)
+            self._pos_ordem(no.direita, resultado)
+            resultado.append(no.valor)
+
+    def em_largura(self):
+        if self.raiz is None:
+            return []
+        fila = deque([self.raiz])
+        resultado = []
+        while fila:
+            no = fila.popleft()
+            resultado.append(no.valor)
+            if no.esquerda:
+                fila.append(no.esquerda)
+            if no.direita:
+                fila.append(no.direita)
+        return resultado
+
+    def altura(self):
+        return self._altura(self.raiz)
+
+    def _altura(self, no):
+        if no is None:
+            return -1
+        return 1 + max(self._altura(no.esquerda), self._altura(no.direita))
+```
+
+Teste e saída verificada:
+
+```python
+arvore = BST()
+for v in [50, 30, 70, 20, 40, 60, 80, 10]:
+    arvore.inserir(v)
+
+print("Pré-ordem:  ", arvore.pre_ordem())
+print("Em-ordem:   ", arvore.em_ordem())
+print("Pós-ordem:  ", arvore.pos_ordem())
+print("Em largura: ", arvore.em_largura())
+print("Altura:     ", arvore.altura())
+print("Em-ordem está crescente?", arvore.em_ordem() == sorted(arvore.em_ordem()))
+```
+
+```
+Pré-ordem:   [50, 30, 20, 10, 40, 70, 60, 80]
+Em-ordem:    [10, 20, 30, 40, 50, 60, 70, 80]
+Pós-ordem:   [10, 20, 40, 30, 60, 80, 70, 50]
+Em largura:  [50, 30, 70, 20, 40, 60, 80, 10]
+Altura:      3
+Em-ordem está crescente? True
+```
+
+A árvore resultante da inserção de `[50, 30, 70, 20, 40, 60, 80, 10]`
+tem 50 na raiz, 30 e 70 como seus filhos, 20 e 40 como filhos de 30, 60 e
+80 como filhos de 70, e 10 como filho esquerdo de 20 — por isso a altura
+é 3 (o caminho mais longo é 50 → 30 → 20 → 10).

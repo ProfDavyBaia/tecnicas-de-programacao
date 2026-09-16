@@ -1,0 +1,318 @@
+---
+title: "Aula 04 — Tabelas Hash"
+subtitle: "Função hash, colisões e acesso em tempo O(1)"
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    transition: fade
+    css: ../../styles-slides.css
+---
+
+## Agenda da Aula
+
+1. Motivação — por que tabelas hash
+2. Função hash e mapeamento chave → índice
+3. Colisões e como tratá-las
+4. Fator de carga e redimensionamento
+5. Implementação em Python
+6. Complexidade, comparativo e aplicações
+
+## Motivação
+
+Até agora vimos estruturas cujo acesso a um elemento específico custa
+O(n) (listas) ou O(log n) (árvores balanceadas). E se pudéssemos acessar
+qualquer valor em **tempo praticamente constante**, O(1), a partir da sua
+chave?
+
+É isso que uma **tabela hash (hash table)** — também chamada de mapa ou
+dicionário — oferece: armazenar pares **chave → valor** com acesso,
+inserção e remoção em O(1) na média.
+
+- `dict` em Python **é** uma tabela hash
+- Bancos de dados, caches e compiladores dependem dela
+
+## Função Hash
+
+Uma **função hash** transforma uma chave (string, número, objeto) em um
+número inteiro — o **hash** — que é então usado como índice em um array
+interno.
+
+$$\text{índice} = \text{hash}(\text{chave}) \mod \text{tamanho\_do\_array}$$
+
+**Propriedades desejáveis de uma boa função hash:**
+
+- **Determinística** — a mesma chave sempre produz o mesmo hash
+- **Rápida** de calcular — O(1) idealmente
+- **Distribuição uniforme** — minimiza chaves diferentes caindo no
+  mesmo índice
+
+```python
+print(hash("temperatura"))  # um inteiro grande, específico da chave
+print(hash(42))
+```
+
+## Colisões
+
+Como o número de chaves possíveis é (em geral) muito maior do que o
+número de posições do array, **colisões são inevitáveis**: duas chaves
+diferentes podem produzir o mesmo índice.
+
+> Princípio da casa dos pombos: se há mais pombos que casas, pelo menos
+> uma casa terá mais de um pombo.
+
+O que diferencia uma boa tabela hash de uma ruim não é "ter zero
+colisões" (impossível em geral), mas sim **como as colisões são
+tratadas** sem degradar o desempenho.
+
+## Tratamento de Colisões: Encadeamento
+
+**Encadeamento (chaining)** — cada posição do array guarda uma **lista**
+de pares chave-valor. Em caso de colisão, o novo par é simplesmente
+adicionado à lista daquela posição.
+
+```python
+class TabelaHashEncadeada:
+    def __init__(self, capacidade=8):
+        self.capacidade = capacidade
+        self.buckets = [[] for _ in range(capacidade)]
+
+    def _indice(self, chave):
+        return hash(chave) % self.capacidade
+
+    def inserir(self, chave, valor):
+        indice = self._indice(chave)
+        for i, (k, _) in enumerate(self.buckets[indice]):
+            if k == chave:
+                self.buckets[indice][i] = (chave, valor)
+                return
+        self.buckets[indice].append((chave, valor))
+```
+
+## Tratamento de Colisões: Encadeamento (busca)
+
+```python
+    def buscar(self, chave):
+        indice = self._indice(chave)
+        for k, v in self.buckets[indice]:
+            if k == chave:
+                return v
+        raise KeyError(chave)
+
+t = TabelaHashEncadeada()
+t.inserir("temperatura", 25.4)
+t.inserir("umidade", 60)
+print(t.buscar("temperatura"))  # 25.4
+```
+
+Se muitas chaves colidirem na mesma posição, a lista daquele bucket cresce
+e a busca ali degrada para O(n) — por isso o **fator de carga** importa.
+
+## Tratamento de Colisões: Endereçamento Aberto
+
+**Endereçamento aberto (open addressing)** — todos os elementos ficam
+diretamente no array; em caso de colisão, o algoritmo procura a próxima
+posição livre seguindo uma regra (*probing*).
+
+- **Linear probing** — tenta `(índice + 1) % capacidade`,
+  `(índice + 2) % capacidade`, ... até achar uma posição livre
+- Mais eficiente em uso de memória (sem listas extras), mas mais sensível
+  a agrupamentos (*clustering*) quando a tabela está muito cheia
+
+```python
+def inserir_linear_probing(array, chave, valor):
+    capacidade = len(array)
+    indice = hash(chave) % capacidade
+    while array[indice] is not None:
+        indice = (indice + 1) % capacidade
+    array[indice] = (chave, valor)
+```
+
+## Fator de Carga e Redimensionamento
+
+O **fator de carga** mede quão "cheia" a tabela está:
+
+$$\text{fator de carga} = \frac{\text{número de elementos}}{\text{capacidade do array}}$$
+
+- Fator de carga baixo → mais espaço desperdiçado, mas menos colisões
+- Fator de carga alto → mais colisões, degradando o desempenho para O(n)
+- Quando o fator de carga ultrapassa um limite (tipicamente ~0.7), a
+  tabela é **redimensionada**: um novo array maior é criado e todas as
+  chaves são reinseridas (*rehashing*)
+
+O `dict` do Python faz esse redimensionamento automaticamente — é por
+isso que, na prática, nunca precisamos gerenciar isso manualmente.
+
+## Implementação em Python: `dict`
+
+O `dict` nativo do Python **já é** uma tabela hash otimizada, com
+tratamento de colisões e redimensionamento automático embutidos:
+
+```python
+leituras = {}
+leituras["temperatura"] = 25.4
+leituras["umidade"] = 60
+leituras["pressao"] = 1013.25
+
+print(leituras["temperatura"])  # 25.4 — O(1) médio
+print("umidade" in leituras)    # True — O(1) médio
+
+for chave, valor in leituras.items():
+    print(chave, "=", valor)
+```
+
+Na prática, sempre que a chave é conhecida e o acesso precisa ser rápido,
+`dict` é a escolha natural em Python — reimplementar uma tabela hash do
+zero é sobretudo um exercício pedagógico.
+
+## Complexidade
+
+| Operação | Caso médio | Pior caso |
+|---|---|---|
+| Inserção | O(1) | O(n) |
+| Busca | O(1) | O(n) |
+| Remoção | O(1) | O(n) |
+
+O pior caso (O(n)) ocorre quando **todas** as chaves colidem no mesmo
+bucket — extremamente raro com uma boa função hash e fator de carga
+controlado, mas importante saber que existe.
+
+## Comparativo: Lista vs. Árvore vs. Tabela Hash
+
+| Estrutura | Busca | Mantém ordem? | Uso típico |
+|---|---|---|---|
+| Lista/array | O(n) | Sim (inserção) | Sequências, poucos elementos |
+| Árvore (BST balanceada) | O(log n) | Sim (chave) | Dados ordenados, range queries |
+| Tabela hash | O(1) médio | Não | Acesso rápido por chave exata |
+
+Tabelas hash vencem quando o objetivo é "buscar por chave" e a ordem não
+importa. Árvores vencem quando é preciso manter os dados ordenados ou
+fazer buscas por intervalo (ex.: "todos os valores entre 10 e 20").
+
+## Aplicações em Engenharia
+
+- **Cache** — memorizar resultados de cálculos custosos, indexados pela
+  entrada (ex.: cache de simulações, resultados de processamento de
+  sinais)
+- **Tabelas de símbolos em compiladores** — associar nomes de variáveis
+  a seus endereços/tipos durante a compilação
+- **Deduplicação de dados** — verificar rapidamente se um valor (ou seu
+  hash) já foi visto antes, ex.: em logs de sensores
+- **Roteamento e redes** — tabelas de hash mapeiam endereços MAC/IP a
+  portas ou rotas
+- **Simulação de eventos discretos** — indexar eventos por identificador
+  único para acesso rápido durante a simulação
+
+## Exercício Final
+
+Implemente uma tabela hash própria (com encadeamento) que:
+
+1. Suporte `inserir(chave, valor)`, `buscar(chave)` e `remover(chave)`
+2. Calcule e imprima o fator de carga atual
+3. Implemente um método `redimensionar()` que dobra a capacidade e
+   reinsere todas as chaves quando o fator de carga ultrapassa 0.7
+4. Compare o tempo de busca da sua tabela hash com uma busca linear em
+   lista, para o mesmo conjunto de dados
+
+**Resumo:** tabelas hash trocam ordem por velocidade — O(1) médio para
+inserir, buscar e remover por chave. Colisões são inevitáveis e tratadas
+por encadeamento ou endereçamento aberto; o fator de carga controla
+quando redimensionar. Em Python, `dict` já resolve tudo isso.
+
+## Exercício Final — Gabarito
+
+```python
+class TabelaHash:
+    def __init__(self, capacidade=4):
+        self.capacidade = capacidade
+        self.tamanho = 0
+        self.buckets = [[] for _ in range(capacidade)]
+
+    def _indice(self, chave, capacidade=None):
+        capacidade = capacidade or self.capacidade
+        return hash(chave) % capacidade
+
+    def fator_de_carga(self):
+        return self.tamanho / self.capacidade
+
+    def inserir(self, chave, valor):
+        indice = self._indice(chave)
+        for i, (k, _) in enumerate(self.buckets[indice]):
+            if k == chave:
+                self.buckets[indice][i] = (chave, valor)
+                return
+        self.buckets[indice].append((chave, valor))
+        self.tamanho += 1
+        if self.fator_de_carga() > 0.7:
+            self._redimensionar()
+```
+
+## Exercício Final — Gabarito (buscar, remover, redimensionar)
+
+```python
+    def buscar(self, chave):
+        indice = self._indice(chave)
+        for k, v in self.buckets[indice]:
+            if k == chave:
+                return v
+        raise KeyError(chave)
+
+    def remover(self, chave):
+        indice = self._indice(chave)
+        bucket = self.buckets[indice]
+        for i, (k, _) in enumerate(bucket):
+            if k == chave:
+                del bucket[i]
+                self.tamanho -= 1
+                return
+        raise KeyError(chave)
+
+    def _redimensionar(self):
+        nova_capacidade = self.capacidade * 2
+        novos_buckets = [[] for _ in range(nova_capacidade)]
+        for bucket in self.buckets:
+            for chave, valor in bucket:
+                indice = self._indice(chave, nova_capacidade)
+                novos_buckets[indice].append((chave, valor))
+        self.capacidade = nova_capacidade
+        self.buckets = novos_buckets
+```
+
+## Exercício Final — Gabarito (teste e saída verificada)
+
+```python
+t = TabelaHash(capacidade=4)
+chaves = ["temperatura", "umidade", "pressao", "luminosidade", "vento"]
+for i, chave in enumerate(chaves):
+    t.inserir(chave, i * 10)
+    print(f"Após inserir '{chave}': tamanho={t.tamanho}, "
+          f"capacidade={t.capacidade}, "
+          f"fator de carga={t.fator_de_carga():.2f}")
+
+print("Buscar 'pressao':", t.buscar("pressao"))
+t.remover("umidade")
+print("Após remover 'umidade', tamanho:", t.tamanho)
+```
+
+Saída verificada:
+
+```
+Após inserir 'temperatura': tamanho=1, capacidade=4, fator de carga=0.25
+Após inserir 'umidade': tamanho=2, capacidade=4, fator de carga=0.50
+Após inserir 'pressao': tamanho=3, capacidade=8, fator de carga=0.38
+Após inserir 'luminosidade': tamanho=4, capacidade=8, fator de carga=0.50
+Após inserir 'vento': tamanho=5, capacidade=8, fator de carga=0.62
+Buscar 'pressao': 20
+Após remover 'umidade', tamanho: 4
+```
+
+Note o redimensionamento acontecendo sozinho: ao inserir `"pressao"`, o
+fator de carga chegaria a 0.75 (> 0.7) com capacidade 4, então a tabela
+dobra automaticamente para capacidade 8 *antes* do próximo `print` — por
+isso a linha já aparece com `capacidade=8`.
+
+O item de comparar o tempo de busca da tabela hash com uma busca linear
+em lista fica como exercício aberto: use o módulo `timeit` para medir
+ambas com um número grande de chaves (ex.: 10 mil) — os tempos exatos
+variam por máquina, mas a tabela hash deve ser perceptivelmente mais
+rápida à medida que o número de elementos cresce.

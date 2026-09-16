@@ -1,0 +1,80 @@
+---
+title: "Gabarito — Aula 01: Pilhas e Filas"
+---
+
+Solução da [atividade desta aula](atividade.qmd). O código abaixo foi
+executado e a saída mostrada é exatamente o que o Python produz.
+
+## Escalonador com histórico e undo
+
+Uma **fila de prioridade** (`heapq`) decide qual tarefa executa a
+seguir; uma **pilha** (`list.append`/`list.pop`) guarda o histórico de
+execuções, permitindo desfazer a última.
+
+```python
+import heapq
+
+def criar_escalonador():
+    return {"fila": [], "contador": 0, "historico": []}
+    # fila: fila de prioridade (prioridade, contador, tarefa)
+    # historico: pilha de tarefas executadas (para undo)
+
+def adicionar_tarefa(escalonador, prioridade, tarefa):
+    heapq.heappush(escalonador["fila"], (prioridade, escalonador["contador"], tarefa))
+    escalonador["contador"] += 1
+
+def executar_proxima(escalonador):
+    if not escalonador["fila"]:
+        return None
+    _, _, tarefa = heapq.heappop(escalonador["fila"])
+    escalonador["historico"].append(tarefa)  # push no histórico (pilha)
+    return tarefa
+
+def desfazer_ultima(escalonador):
+    if not escalonador["historico"]:
+        return None
+    return escalonador["historico"].pop()    # pop da pilha = undo
+
+def historico_atual(escalonador):
+    return list(escalonador["historico"])
+```
+
+## Teste e saída verificada
+
+```python
+escalonador = criar_escalonador()
+adicionar_tarefa(escalonador, 3, "Enviar telemetria")
+adicionar_tarefa(escalonador, 1, "Tratar interrupção crítica")
+adicionar_tarefa(escalonador, 2, "Ler sensor de temperatura")
+adicionar_tarefa(escalonador, 1, "Parada de emergência")
+adicionar_tarefa(escalonador, 4, "Atualizar log")
+
+print("Ordem de execução:")
+for _ in range(3):
+    print("-", executar_proxima(escalonador))
+
+print("Histórico após 3 execuções:", historico_atual(escalonador))
+
+desfeita = desfazer_ultima(escalonador)
+print("Desfazendo última tarefa:", desfeita)
+print("Histórico após desfazer:", historico_atual(escalonador))
+```
+
+Saída verificada:
+
+```
+Ordem de execução:
+- Tratar interrupção crítica
+- Parada de emergência
+- Ler sensor de temperatura
+Histórico após 3 execuções: ['Tratar interrupção crítica', 'Parada de emergência', 'Ler sensor de temperatura']
+Desfazendo última tarefa: Ler sensor de temperatura
+Histórico após desfazer: ['Tratar interrupção crítica', 'Parada de emergência']
+```
+
+Note o desempate: entre as duas tarefas de prioridade 1 ("Tratar
+interrupção crítica" e "Parada de emergência"), o contador de chegada
+garante que a primeira a ser adicionada seja executada primeiro — sem
+ele, o `heapq` tentaria comparar diretamente as strings das tarefas em
+caso de empate, o que pode gerar comportamento inesperado com outros
+tipos de dados.

@@ -82,7 +82,8 @@ da capacidade gera **stack overflow**.
 ## Implementação de Pilha em Python
 
 Python oferece duas formas principais para implementar pilhas: usando
-`list` nativa ou uma classe orientada a objetos.
+`list` nativa diretamente ou organizando as operações em **funções** que
+recebem a lista como parâmetro.
 
 **Usando lista Python:**
 
@@ -110,39 +111,35 @@ if not pilha:
     print("Pilha vazia!")
 ```
 
-## Implementação de Pilha em Python — classe
+## Implementação de Pilha em Python — com funções
 
-**Usando classe orientada a objetos:**
+**Organizando as operações em funções:**
 
 ```python
-class Pilha:
-    def __init__(self):
-        self._dados = []
+def push(pilha, item):
+    pilha.append(item)
 
-    def push(self, item):
-        self._dados.append(item)
+def pop(pilha):
+    if not pilha:
+        raise IndexError("Underflow!")
+    return pilha.pop()
 
-    def pop(self):
-        if self.is_empty():
-            raise IndexError("Underflow!")
-        return self._dados.pop()
+def peek(pilha):
+    return pilha[-1]
 
-    def peek(self):
-        return self._dados[-1]
-
-    def is_empty(self):
-        return len(self._dados) == 0
-
-    def size(self):
-        return len(self._dados)
+def is_empty(pilha):
+    return len(pilha) == 0
 
 # Uso
-p = Pilha()
-p.push(5)
-p.push(10)
-print(p.peek())  # 10
-print(p.pop())   # 10
+p = []
+push(p, 5)
+push(p, 10)
+print(peek(p))  # 10
+print(pop(p))   # 10
 ```
+
+Cada função recebe a pilha (uma lista comum) como parâmetro e opera sobre
+ela — sem precisar de uma classe para agrupar o comportamento.
 
 ## Aplicação Prática: Verificador de Parênteses
 
@@ -253,39 +250,38 @@ print(len(fila) == 0)  # False
 
 ## Implementação de Fila em Python — nó encadeado
 
-**Classe Fila com nó encadeado:**
+**Fila com nó encadeado, usando dicionários:**
 
 ```python
-class No:
-    def __init__(self, dado):
-        self.dado = dado
-        self.proximo = None
+def criar_no(dado):
+    return {"dado": dado, "proximo": None}
 
-class Fila:
-    def __init__(self):
-        self.front = None
-        self.rear = None
-        self._tamanho = 0
+def criar_fila():
+    return {"front": None, "rear": None, "tamanho": 0}
 
-    def enqueue(self, item):
-        novo = No(item)
-        if self.rear:
-            self.rear.proximo = novo
-        self.rear = novo
-        if not self.front:
-            self.front = novo
-        self._tamanho += 1
+def enqueue(fila, item):
+    novo = criar_no(item)
+    if fila["rear"]:
+        fila["rear"]["proximo"] = novo
+    fila["rear"] = novo
+    if not fila["front"]:
+        fila["front"] = novo
+    fila["tamanho"] += 1
 
-    def dequeue(self):
-        if not self.front:
-            raise IndexError("Fila vazia!")
-        dado = self.front.dado
-        self.front = self.front.proximo
-        if not self.front:
-            self.rear = None
-        self._tamanho -= 1
-        return dado
+def dequeue(fila):
+    if not fila["front"]:
+        raise IndexError("Fila vazia!")
+    dado = fila["front"]["dado"]
+    fila["front"] = fila["front"]["proximo"]
+    if not fila["front"]:
+        fila["rear"] = None
+    fila["tamanho"] -= 1
+    return dado
 ```
+
+Cada nó é um dicionário `{"dado": ..., "proximo": ...}`. A função
+`enqueue` liga um nó ao outro através da chave `"proximo"`, do mesmo jeito
+que uma classe ligaria através de `self.proximo`.
 
 ## Variações de Filas
 
@@ -312,28 +308,29 @@ de recepção faz *enqueue* dos bytes recebidos; a rotina principal faz
 
 ```python
 # Simulação de buffer circular para UART em Python
-class BufferCircular:
-    def __init__(self, capacidade):
-        self.buffer = [None] * capacidade
-        self.capacidade = capacidade
-        self.head = 0  # posição de leitura
-        self.tail = 0  # posição de escrita
-        self.tamanho = 0
+def criar_buffer(capacidade):
+    return {
+        "buffer": [None] * capacidade,
+        "capacidade": capacidade,
+        "head": 0,  # posição de leitura
+        "tail": 0,  # posição de escrita
+        "tamanho": 0,
+    }
 
-    def enqueue(self, byte):
-        if self.tamanho == self.capacidade:
-            raise OverflowError("Buffer cheio! Dado perdido.")
-        self.buffer[self.tail] = byte
-        self.tail = (self.tail + 1) % self.capacidade
-        self.tamanho += 1
+def enqueue_buffer(estado, byte):
+    if estado["tamanho"] == estado["capacidade"]:
+        raise OverflowError("Buffer cheio! Dado perdido.")
+    estado["buffer"][estado["tail"]] = byte
+    estado["tail"] = (estado["tail"] + 1) % estado["capacidade"]
+    estado["tamanho"] += 1
 
-    def dequeue(self):
-        if self.tamanho == 0:
-            return None
-        dado = self.buffer[self.head]
-        self.head = (self.head + 1) % self.capacidade
-        self.tamanho -= 1
-        return dado
+def dequeue_buffer(estado):
+    if estado["tamanho"] == 0:
+        return None
+    dado = estado["buffer"][estado["head"]]
+    estado["head"] = (estado["head"] + 1) % estado["capacidade"]
+    estado["tamanho"] -= 1
+    return dado
 ```
 
 ## Comparativo: Pilha vs. Fila
@@ -397,6 +394,61 @@ tarefas para um microcontrolador que:
 - **Buffer circular:** fila de tamanho fixo para hardware
 - **Deque:** generalização com duas extremidades
 - **Python:** use `list` para pilhas, `deque` para filas
+
+## Exercício Final — Gabarito
+
+```python
+import heapq
+
+def criar_escalonador():
+    return {"fila": [], "contador": 0, "historico": []}
+    # fila: fila de prioridade (prioridade, contador, tarefa)
+    # historico: pilha de tarefas executadas (para undo)
+
+def adicionar_tarefa(escalonador, prioridade, tarefa):
+    heapq.heappush(escalonador["fila"], (prioridade, escalonador["contador"], tarefa))
+    escalonador["contador"] += 1
+
+def executar_proxima(escalonador):
+    if not escalonador["fila"]:
+        return None
+    _, _, tarefa = heapq.heappop(escalonador["fila"])
+    escalonador["historico"].append(tarefa)  # push no histórico (pilha)
+    return tarefa
+
+def desfazer_ultima(escalonador):
+    if not escalonador["historico"]:
+        return None
+    return escalonador["historico"].pop()    # pop da pilha = undo
+```
+
+## Exercício Final — Gabarito (uso e saída verificada)
+
+```python
+escalonador = criar_escalonador()
+adicionar_tarefa(escalonador, 3, "Enviar telemetria")
+adicionar_tarefa(escalonador, 1, "Tratar interrupção crítica")
+adicionar_tarefa(escalonador, 2, "Ler sensor de temperatura")
+adicionar_tarefa(escalonador, 1, "Parada de emergência")
+adicionar_tarefa(escalonador, 4, "Atualizar log")
+
+for _ in range(3):
+    print("-", executar_proxima(escalonador))
+print("Desfazendo:", desfazer_ultima(escalonador))
+```
+
+Saída verificada:
+
+```
+- Tratar interrupção crítica
+- Parada de emergência
+- Ler sensor de temperatura
+Desfazendo: Ler sensor de temperatura
+```
+
+Observe o desempate: entre duas tarefas de prioridade 1 ("Tratar
+interrupção crítica" e "Parada de emergência"), o contador de chegada
+garante que a primeira a ser adicionada seja executada primeiro.
 
 ## Dúvidas e Perguntas?
 

@@ -1,0 +1,30 @@
+---
+title: "Atividade — Aula 02: Filas na Prática"
+---
+
+## Desafio prático: simulador de atendimento com prioridade
+
+Implemente um simulador de **atendimento com prioridade** (por exemplo,
+um pronto-socorro ou um suporte técnico):
+
+1. Pacientes ou chamados chegam com uma prioridade (1 = mais urgente).
+2. Uma **fila de prioridade** decide quem é atendido a seguir.
+3. Registre, com uma **pilha** (revisitando a Aula 01), o histórico de
+   atendimentos já concluídos.
+4. Ao final, imprima a ordem de atendimento e o histórico completo.
+
+**Requisitos:**
+
+- Um conjunto de funções que permita registrar a chegada de um
+  paciente/chamado com nome e prioridade (o estado pode ser guardado em
+  um dicionário, passado como parâmetro para cada função).
+- Uma função que atenda sempre o paciente de maior prioridade disponível,
+  desempatando por ordem de chegada.
+- Um histórico que acumule, na ordem em que aconteceram, todos os
+  atendimentos já concluídos.
+
+Teste com pelo menos 4 chegadas, incluindo um empate de prioridade entre
+duas delas, e confira se a ordem de atendimento respeita tanto a
+prioridade quanto o desempate por chegada.
+
+Confira o [gabarito](gabarito.qmd) depois de tentar resolver.

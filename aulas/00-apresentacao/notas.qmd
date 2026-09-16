@@ -34,7 +34,9 @@ encontros síncronos (peso 8) = 10.
 
 Esta primeira aula revisa os fundamentos de Python antes de entrarmos em
 estruturas de dados: entrada de dados, condicionais (`if`/`elif`/`else`) e
-laços de repetição (`for`, `while`).
+laços de repetição (`for`, `while`). Cada atividade abaixo traz o
+enunciado, um exemplo de execução e o **gabarito** — o código Python
+completo, já testado, com a saída exata que ele produz.
 
 ### Atividade 1 — Soma de dois números
 
@@ -50,6 +52,17 @@ Digite o valor de b: 3
 A soma de a e b é: 8
 ```
 
+**Gabarito:**
+
+```python
+a = int(input("Digite o valor de a: "))
+b = int(input("Digite o valor de b: "))
+soma = a + b
+print(f"A soma de a e b é: {soma}")
+```
+
+Saída verificada (entrada `5`, `3`): idêntica ao exemplo acima.
+
 Uma variação pede ao usuário para escolher entre soma e subtração por meio
 de um pequeno menu:
 
@@ -61,6 +74,22 @@ Digite o valor de b: 4
 Escolha uma operação: 2
 Resultado da subtração: 6
 ```
+
+**Gabarito da variação:**
+
+```python
+a = int(input("Digite o valor de a: "))
+b = int(input("Digite o valor de b: "))
+print("1 - Soma")
+print("2 - Subtração")
+op = int(input("Escolha uma operação: "))
+if op == 1:
+    print(f"Resultado da soma: {a + b}")
+elif op == 2:
+    print(f"Resultado da subtração: {a - b}")
+```
+
+Saída verificada (entrada `10`, `4`, `2`): idêntica ao exemplo acima.
 
 ### Atividade 2 — Soma de N números com `for`
 
@@ -81,6 +110,19 @@ A soma de todos os números é: 17
 Requisitos: usar `for`; permitir que o usuário escolha quantos números
 serão digitados; armazenar a soma em uma variável acumuladora; mostrar o
 resultado ao final.
+
+**Gabarito:**
+
+```python
+n = int(input("Quantos números você deseja somar? "))
+soma = 0
+for i in range(1, n + 1):
+    numero = int(input(f"Digite o {i}º número: "))
+    soma += numero
+print(f"A soma de todos os números é: {soma}")
+```
+
+Saída verificada (entrada `3`, `10`, `5`, `2`): idêntica ao exemplo acima.
 
 ### Atividade 3 — Verificador de pares e ímpares
 
@@ -107,6 +149,27 @@ Quantidade de números ímpares: 2
 Dica: um número é par quando o resto da divisão por 2 é igual a zero
 (`n % 2 == 0`).
 
+**Gabarito:**
+
+```python
+n = int(input("Quantos números deseja informar? "))
+pares = 0
+impares = 0
+for i in range(1, n + 1):
+    numero = int(input(f"Digite o {i}º número: "))
+    if numero % 2 == 0:
+        print(f"{numero} é par.")
+        pares += 1
+    else:
+        print(f"{numero} é ímpar.")
+        impares += 1
+print(f"Quantidade de números pares: {pares}")
+print(f"Quantidade de números ímpares: {impares}")
+```
+
+Saída verificada (entrada `4`, `10`, `7`, `4`, `9`): idêntica ao exemplo
+acima.
+
 ### Atividade 4 — Calculadora com menu de opções
 
 Enunciado: o programa apresenta um menu com as opções Somar, Subtrair,
@@ -116,28 +179,67 @@ em seguida. Uma estrutura `while` mantém o programa em execução até que o
 usuário escolha `0` (Sair). Se for digitada uma opção inválida, o programa
 exibe "Opção inválida" e mostra o menu novamente.
 
-Exemplos de execução:
-
-```
-Escolha uma opção: 1
-Digite o primeiro número: 10
-Digite o segundo número: 5
-Resultado: 15
-```
-
-```
-Escolha uma opção: 3
-Digite o primeiro número: 4
-Digite o segundo número: 5
-Resultado: 20
-```
-
-```
-Escolha uma opção: 0
-Programa encerrado.
-```
-
 Requisitos: usar variáveis para armazenar os números, a opção e o
 resultado; usar `while` para repetir o menu; usar `if`/`elif`/`else` para
 verificar a opção escolhida; mostrar o resultado de cada operação; encerrar
 somente quando a opção `0` for escolhida.
+
+**Gabarito:**
+
+```python
+while True:
+    print("1 - Somar")
+    print("2 - Subtrair")
+    print("3 - Multiplicar")
+    print("0 - Sair")
+    opcao = int(input("Escolha uma opção: "))
+
+    if opcao == 0:
+        print("Programa encerrado.")
+        break
+    elif opcao in (1, 2, 3):
+        a = int(input("Digite o primeiro número: "))
+        b = int(input("Digite o segundo número: "))
+        if opcao == 1:
+            resultado = a + b
+        elif opcao == 2:
+            resultado = a - b
+        else:
+            resultado = a * b
+        print(f"Resultado: {resultado}")
+    else:
+        print("Opção inválida")
+```
+
+Saída verificada, para a entrada `1`, `10`, `5`, `3`, `4`, `5`, `0` (soma,
+depois multiplicação, depois sai):
+
+```
+1 - Somar
+2 - Subtrair
+3 - Multiplicar
+0 - Sair
+Escolha uma opção: 1
+Digite o primeiro número: 10
+Digite o segundo número: 5
+Resultado: 15
+1 - Somar
+2 - Subtrair
+3 - Multiplicar
+0 - Sair
+Escolha uma opção: 3
+Digite o primeiro número: 4
+Digite o segundo número: 5
+Resultado: 20
+1 - Somar
+2 - Subtrair
+3 - Multiplicar
+0 - Sair
+Escolha uma opção: 0
+Programa encerrado.
+```
+
+Também testamos o caminho de opção inválida: com a entrada `9`, `1`,
+`2`, `3`, `0`, o programa imprime "Opção inválida" para a opção `9`,
+depois processa normalmente a soma `1 + 2 = 3` na opção `1`, e encerra na
+opção `0`.

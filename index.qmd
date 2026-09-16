@@ -29,7 +29,9 @@ disciplina, seguido de uma revisão prática de entrada de dados,
 condicionais e laços de repetição em Python.
 
 <span class="links">[Slides](aulas/00-apresentacao/aula.html) ·
-[Notas](aulas/00-apresentacao/notas.qmd)</span>
+[Notas](aulas/00-apresentacao/notas.qmd) ·
+[Atividade](aulas/00-apresentacao/atividade.qmd) ·
+[Gabarito](aulas/00-apresentacao/gabarito.qmd)</span>
 </div>
 :::
 
@@ -44,7 +46,56 @@ parênteses, call stack, buffer circular em UART) e comparativo entre as
 duas estruturas.
 
 <span class="links">[Slides](aulas/01-pilhas-e-filas/aula.html) ·
-[Notas](aulas/01-pilhas-e-filas/notas.qmd)</span>
+[Notas](aulas/01-pilhas-e-filas/notas.qmd) ·
+[Atividade](aulas/01-pilhas-e-filas/atividade.qmd) ·
+[Gabarito](aulas/01-pilhas-e-filas/gabarito.qmd)</span>
+</div>
+:::
+
+:::{.aula-card}
+<div class="numero">02</div>
+<div>
+<strong>Filas na prática: BFS, filas de prioridade e escalonamento</strong>
+
+Busca em largura (BFS) usando filas, filas de prioridade com `heapq`,
+escalonador de tarefas e simulação de escalonamento round-robin.
+
+<span class="links">[Slides](aulas/02-filas-na-pratica/aula.html) ·
+[Notas](aulas/02-filas-na-pratica/notas.qmd) ·
+[Atividade](aulas/02-filas-na-pratica/atividade.qmd) ·
+[Gabarito](aulas/02-filas-na-pratica/gabarito.qmd)</span>
+</div>
+:::
+
+:::{.aula-card}
+<div class="numero">03</div>
+<div>
+<strong>Árvores</strong>
+
+Terminologia de árvores, Árvore Binária de Busca (BST): inserção, busca
+e percursos (pré-ordem, em-ordem, pós-ordem e em largura), complexidade
+e aplicações em engenharia.
+
+<span class="links">[Slides](aulas/03-arvores/aula.html) ·
+[Notas](aulas/03-arvores/notas.qmd) ·
+[Atividade](aulas/03-arvores/atividade.qmd) ·
+[Gabarito](aulas/03-arvores/gabarito.qmd)</span>
+</div>
+:::
+
+:::{.aula-card}
+<div class="numero">04</div>
+<div>
+<strong>Tabelas hash</strong>
+
+Função hash, colisões e seu tratamento (encadeamento e endereçamento
+aberto), fator de carga e redimensionamento, implementação com `dict` e
+aplicações em engenharia.
+
+<span class="links">[Slides](aulas/04-tabelas-hash/aula.html) ·
+[Notas](aulas/04-tabelas-hash/notas.qmd) ·
+[Atividade](aulas/04-tabelas-hash/atividade.qmd) ·
+[Gabarito](aulas/04-tabelas-hash/gabarito.qmd)</span>
 </div>
 :::
 
@@ -65,6 +116,9 @@ duas estruturas.
 |:------:|------|------|
 | 1      |      | Apresentação da disciplina e revisão de lógica de programação |
 | 2      |      | Estruturas de dados: pilhas e filas |
+| 3      |      | Filas na prática: BFS, filas de prioridade e escalonamento |
+| 4      |      | Árvores |
+| 5      |      | Tabelas hash |
 
 ## Avaliação {#avaliacao}
 

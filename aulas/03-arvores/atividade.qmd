@@ -1,0 +1,27 @@
+---
+title: "Atividade — Aula 03: Árvores"
+---
+
+## Desafio prático: BST completa
+
+Implemente uma Árvore Binária de Busca (BST) completa em Python que:
+
+1. Suporte `inserir(valor)` e `buscar(valor)`.
+2. Implemente os três percursos recursivos (pré-ordem, em-ordem,
+   pós-ordem) e o percurso em largura (usando fila, como na Aula 02).
+3. Adicione um método `altura()` que calcule a altura da árvore
+   recursivamente.
+4. Teste com uma sequência de valores e verifique se o percurso em-ordem
+   sempre retorna os valores em ordem crescente.
+
+**Requisitos:**
+
+- Uma classe `No` com valor, filho esquerdo e filho direito.
+- Uma classe `BST` que encapsule a raiz e todos os métodos acima.
+- O método `altura()` deve considerar uma árvore vazia como altura -1 e
+  uma folha como altura 0.
+
+Teste com pelo menos 8 valores diferentes e imprima os quatro percursos,
+a altura da árvore e o resultado da busca por um valor específico.
+
+Confira o [gabarito](gabarito.qmd) depois de tentar resolver.

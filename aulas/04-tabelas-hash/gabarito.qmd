@@ -1,0 +1,131 @@
+---
+title: "Gabarito — Aula 04: Tabelas Hash"
+---
+
+Solução da [atividade desta aula](atividade.qmd). O código abaixo foi
+executado e a saída mostrada é exatamente o que o Python produz.
+
+## Tabela hash própria com encadeamento
+
+```python
+class TabelaHash:
+    def __init__(self, capacidade=4):
+        self.capacidade = capacidade
+        self.tamanho = 0
+        self.buckets = [[] for _ in range(capacidade)]
+
+    def _indice(self, chave, capacidade=None):
+        capacidade = capacidade or self.capacidade
+        return hash(chave) % capacidade
+
+    def fator_de_carga(self):
+        return self.tamanho / self.capacidade
+
+    def inserir(self, chave, valor):
+        indice = self._indice(chave)
+        for i, (k, _) in enumerate(self.buckets[indice]):
+            if k == chave:
+                self.buckets[indice][i] = (chave, valor)
+                return
+        self.buckets[indice].append((chave, valor))
+        self.tamanho += 1
+        if self.fator_de_carga() > 0.7:
+            self._redimensionar()
+
+    def buscar(self, chave):
+        indice = self._indice(chave)
+        for k, v in self.buckets[indice]:
+            if k == chave:
+                return v
+        raise KeyError(chave)
+
+    def remover(self, chave):
+        indice = self._indice(chave)
+        bucket = self.buckets[indice]
+        for i, (k, _) in enumerate(bucket):
+            if k == chave:
+                del bucket[i]
+                self.tamanho -= 1
+                return
+        raise KeyError(chave)
+
+    def _redimensionar(self):
+        nova_capacidade = self.capacidade * 2
+        novos_buckets = [[] for _ in range(nova_capacidade)]
+        for bucket in self.buckets:
+            for chave, valor in bucket:
+                indice = self._indice(chave, nova_capacidade)
+                novos_buckets[indice].append((chave, valor))
+        self.capacidade = nova_capacidade
+        self.buckets = novos_buckets
+```
+
+## Teste e saída verificada
+
+```python
+t = TabelaHash(capacidade=4)
+chaves = ["temperatura", "umidade", "pressao", "luminosidade", "vento"]
+for i, chave in enumerate(chaves):
+    t.inserir(chave, i * 10)
+    print(f"Após inserir '{chave}': tamanho={t.tamanho}, "
+          f"capacidade={t.capacidade}, "
+          f"fator de carga={t.fator_de_carga():.2f}")
+
+print("Buscar 'pressao':", t.buscar("pressao"))
+t.remover("umidade")
+print("Após remover 'umidade', tamanho:", t.tamanho)
+```
+
+Saída verificada:
+
+```
+Após inserir 'temperatura': tamanho=1, capacidade=4, fator de carga=0.25
+Após inserir 'umidade': tamanho=2, capacidade=4, fator de carga=0.50
+Após inserir 'pressao': tamanho=3, capacidade=8, fator de carga=0.38
+Após inserir 'luminosidade': tamanho=4, capacidade=8, fator de carga=0.50
+Após inserir 'vento': tamanho=5, capacidade=8, fator de carga=0.62
+Buscar 'pressao': 20
+Após remover 'umidade', tamanho: 4
+```
+
+Note o redimensionamento acontecendo sozinho: ao inserir `"pressao"`, o
+fator de carga chegaria a 0.75 (maior que 0.7) com capacidade 4, então a
+tabela dobra automaticamente para capacidade 8 *antes* do `print`
+seguinte — por isso essa linha já aparece com `capacidade=8`.
+
+## Comparando com busca linear (item 4)
+
+O trecho abaixo mede, com `timeit`, o tempo de busca na `TabelaHash`
+contra uma busca linear em uma lista de tuplas `(chave, valor)`, para o
+mesmo conjunto de 2.000 chaves. Os tempos absolutos variam por máquina —
+o que se espera observar é a tabela hash consistentemente mais rápida,
+já que a busca linear é O(n) e a busca na tabela hash é O(1) em média.
+
+```python
+import timeit
+
+n = 2000
+chaves = [f"chave_{i}" for i in range(n)]
+
+tabela = TabelaHash(capacidade=8)
+lista = []
+for i, chave in enumerate(chaves):
+    tabela.inserir(chave, i)
+    lista.append((chave, i))
+
+alvo = chaves[-1]  # pior caso para a busca linear: último elemento
+
+tempo_hash = timeit.timeit(lambda: tabela.buscar(alvo), number=1000)
+tempo_lista = timeit.timeit(
+    lambda: next(v for k, v in lista if k == alvo), number=1000
+)
+
+print(f"Tabela hash: {tempo_hash:.4f}s para 1000 buscas")
+print(f"Lista (linear): {tempo_lista:.4f}s para 1000 buscas")
+print(f"A tabela hash foi {tempo_lista / tempo_hash:.1f}x mais rápida nesta execução")
+```
+
+Executando localmente, o resultado típico mostra a tabela hash
+significativamente mais rápida (facilmente uma ou mais ordens de
+grandeza) nesse cenário de pior caso para a lista — mas rode você mesmo
+e registre os números da sua máquina, em vez de citar um valor fixo.
