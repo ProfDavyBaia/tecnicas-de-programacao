@@ -10,7 +10,7 @@ title: "Avaliação 1 — Estruturas de Dados (Aulas 00–04)"
 
 - Consulta livre às notas e slides das aulas da disciplina.
 - Não é permitido usar bibliotecas prontas de estrutura de dados (por
-  exemplo, `collections.Counter` na Questão 5).
+  exemplo, `collections.Counter` na Questão 05).
 - Todas as questões devem ser resolvidas em Python puro; teste a saída
   do seu próprio programa antes de entregar.
 - Nenhuma questão exige (ou deve usar) `class` — siga o padrão de
