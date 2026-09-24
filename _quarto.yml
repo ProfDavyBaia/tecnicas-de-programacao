@@ -3,6 +3,7 @@ project:
   render:
     - "*.qmd"
     - "aulas/**/*.qmd"
+    - "avaliacoes/**/*.qmd"
 
 # engine jupyter: necessário se a disciplina tiver blocos ```{python}```.
 # remova esta linha se a disciplina for só conteúdo estático (sem código)
@@ -25,6 +26,8 @@ website:
         text: Cronograma
       - href: index.qmd#avaliacao
         text: Avaliação
+      - href: index.qmd#avaliacoes-aplicadas
+        text: Avaliações Aplicadas
       - href: index.qmd#bibliografia
         text: Bibliografia
     right:

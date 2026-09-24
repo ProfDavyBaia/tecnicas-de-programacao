@@ -41,9 +41,9 @@ condicionais e laços de repetição em Python.
 <strong>Estruturas de dados: pilhas e filas</strong>
 
 Conceito e princípio LIFO/FIFO, operações fundamentais, implementação em
-Python (lista, `deque`, classes), aplicações práticas (verificador de
-parênteses, call stack, buffer circular em UART) e comparativo entre as
-duas estruturas.
+Python (lista, `deque`, funções sobre dicionários), aplicações práticas
+(verificador de parênteses, call stack, buffer circular em UART) e
+comparativo entre as duas estruturas.
 
 <span class="links">[Slides](aulas/01-pilhas-e-filas/aula.html) ·
 [Notas](aulas/01-pilhas-e-filas/notas.qmd) ·
@@ -128,6 +128,23 @@ com trabalhos individuais e em grupo.
 **Composição da nota:** Assiduidade (2) + Avaliações — atividades
 práticas e exercícios síncronos e assíncronos, incluindo a participação
 nos encontros síncronos (8) = 10.
+
+## Avaliações Aplicadas {#avaliacoes-aplicadas}
+
+:::{.aula-card}
+<div class="numero">AV1</div>
+<div>
+<strong>Avaliação 1 — Estruturas de dados (Aulas 00–04)</strong>
+
+Avaliação prática individual, no computador, cobrindo revisão de lógica
+e funções, pilhas, filas, árvores e tabelas hash — sem uso de `class`,
+seguindo o padrão de dicionários e funções das aulas.
+
+<span class="links">[Prova](avaliacoes/avaliacao-01/prova.qmd)</span>
+</div>
+:::
+
+<!-- Duplique o bloco ":::{.aula-card} ... :::" acima para cada nova avaliação -->
 
 ## Bibliografia {#bibliografia}
 

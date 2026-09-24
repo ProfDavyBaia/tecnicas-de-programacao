@@ -1,0 +1,189 @@
+---
+title: "Avaliação 1 — Estruturas de Dados (Aulas 00–04)"
+---
+
+**Disciplina:** EGEL013 — Técnicas de Programação · **Cobertura:** Aulas
+00 a 04 (revisão de lógica e funções, pilhas e filas, filas na prática,
+árvores, tabelas hash).
+
+## Instruções gerais
+
+- Consulta livre às notas e slides das aulas da disciplina.
+- Não é permitido usar bibliotecas prontas de estrutura de dados (por
+  exemplo, `collections.Counter` na Questão 5).
+- Todas as questões devem ser resolvidas em Python puro; teste a saída
+  do seu próprio programa antes de entregar.
+- Nenhuma questão exige (ou deve usar) `class` — siga o padrão de
+  dicionários e funções visto em todas as aulas.
+- Entregue um arquivo `.py` por questão (`questao1.py`, `questao2.py`,
+  …), com um comentário no topo indicando seu nome e o número da
+  questão.
+- Pontuação total: 10,0 pontos, distribuídos conforme cada questão.
+
+## Questão 1 — Fundamentos e funções (2,0 pontos)
+
+Escreva um programa que:
+
+- Pergunte ao usuário quantas notas ele deseja informar (`n`).
+- Leia as `n` notas informadas usando um laço `for`.
+- Use uma função `media(notas)` que recebe uma **lista** de notas e
+  retorna a média aritmética.
+- Use uma função `classificar(media_final)` que recebe a média e
+  retorna a string `"Aprovado"` (se a média for maior ou igual a 6) ou
+  `"Reprovado"` (caso contrário).
+- Mostre a média (com uma casa decimal) e a situação final.
+
+Exemplo de execução:
+
+```
+Quantas notas deseja informar? 3
+Digite a 1ª nota: 7
+Digite a 2ª nota: 5
+Digite a 3ª nota: 8
+Média: 6.7
+Situação: Aprovado
+```
+
+**Requisitos:** usar `def` para as duas funções pedidas (`media` e
+`classificar`); usar `return` para devolver os resultados; usar `for`
+para ler as notas.
+
+## Questão 2 — Pilhas (2,0 pontos)
+
+Um número inteiro positivo pode ser convertido para binário calculando
+sucessivamente o resto da divisão por 2 e **empilhando** cada resto —
+ao final, desempilhar tudo produz os dígitos binários na ordem correta
+(do mais significativo para o menos significativo).
+
+Implemente uma função `decimal_para_binario(n)` que:
+
+- Recebe um número inteiro `n` (não negativo).
+- Usa uma **pilha** (lista Python, com `append`/`pop`) para armazenar
+  os restos da divisão por 2.
+- Retorna uma string com a representação binária de `n`.
+- Trata corretamente o caso `n == 0` (deve retornar `"0"`).
+
+Teste sua função com pelo menos três valores diferentes, incluindo `0`.
+
+Exemplo de execução:
+
+```
+decimal_para_binario(13)  -> 1101
+decimal_para_binario(0)   -> 0
+decimal_para_binario(255) -> 11111111
+```
+
+**Requisitos:** usar uma lista como pilha (`append` para empilhar,
+`pop` para desempilhar); não usar a função `bin()` do Python nem outras
+conversões prontas.
+
+## Questão 3 — Filas (2,5 pontos)
+
+Uma impressora compartilhada processa trabalhos de impressão na ordem
+em que chegam (FIFO). Cada trabalho tem um nome e uma quantidade de
+páginas; a impressora gasta 2 segundos por página.
+
+Implemente uma função `simular_fila_impressao(trabalhos,
+segundos_por_pagina=2)` que:
+
+- Recebe uma lista de trabalhos, cada um representado por uma tupla
+  `(nome, paginas)`.
+- Usa uma **fila** (`collections.deque`) para processar os trabalhos na
+  ordem de chegada.
+- Para cada trabalho, calcula quanto tempo ele esperou até começar a
+  imprimir (`espera`) e quanto tempo levou para imprimir (`duracao`).
+- Retorna uma lista com `(nome, espera, duracao)` de cada trabalho, e o
+  tempo total da fila.
+
+Teste com pelo menos três trabalhos de tamanhos diferentes e imprima o
+resultado de cada um, além do tempo total.
+
+Exemplo de execução:
+
+```
+relatorio.pdf: esperou 0s, imprimiu em 10s
+foto.png: esperou 10s, imprimiu em 4s
+apresentacao.pptx: esperou 14s, imprimiu em 20s
+Tempo total da fila: 34s
+```
+
+**Requisitos:** usar `collections.deque` para representar a fila; a
+ordem de processamento deve respeitar FIFO (primeiro a chegar, primeiro
+a ser impresso).
+
+## Questão 4 — Árvores (2,0 pontos)
+
+Usando o padrão de árvore binária de busca (BST) visto em aula — nós
+representados por dicionários `{"valor": ..., "esquerda": ...,
+"direita": ...}` — implemente duas funções:
+
+- `contar_nos(no)`: retorna a quantidade total de nós na árvore (ou
+  subárvore) a partir do nó recebido.
+- `soma_valores(no)`: retorna a soma de todos os valores da árvore (ou
+  subárvore) a partir do nó recebido.
+
+Ambas devem ser **recursivas** e considerar uma árvore vazia (`no is
+None`) como caso base.
+
+Monte uma BST inserindo os valores `[50, 30, 70, 20, 40, 60, 80]` (pode
+reaproveitar a função `inserir` vista em aula) e teste as duas funções
+sobre ela.
+
+Exemplo de execução:
+
+```
+Quantidade de nós: 7
+Soma dos valores: 350
+```
+
+**Requisitos:** nós representados por dicionários (sem uso de `class`);
+funções recursivas; tratar corretamente o caso base de árvore/subárvore
+vazia.
+
+## Questão 5 — Tabelas hash (1,5 pontos)
+
+Implemente uma função `contar_frequencia(palavras)` que recebe uma
+lista de palavras e retorna um dicionário `{palavra: quantidade}` com a
+frequência de cada palavra na lista.
+
+Em seguida:
+
+- Aplique a função sobre o texto `"o rato roeu a roupa do rei de roma o
+  rato roeu"` (dividido em palavras com `.split()`).
+- Imprima a frequência de cada palavra, em ordem alfabética.
+- Identifique e imprima a palavra mais frequente e sua contagem.
+
+Exemplo de execução:
+
+```
+a: 1
+de: 1
+do: 1
+o: 2
+rato: 2
+rei: 1
+roeu: 2
+roma: 1
+roupa: 1
+Palavra mais frequente: 'o' (2x)
+```
+
+**Requisitos:** usar um `dict` para contar as frequências (é exatamente
+uma tabela hash, só que já pronta na linguagem); não usar
+`collections.Counter` — o objetivo é praticar a lógica manual de
+contagem com dicionário.
+
+## Entrega Final
+
+Compactem todos os arquivos pedidos em uma única pasta `.zip`, nomeada
+`AtividadeAvaliativa1.zip`, contendo:
+
+- Os cinco arquivos `.py` (`questao1.py` a `questao5.py`).
+
+**Prazo:** 29 de setembro de 2026, até às 23:59.
+
+**Modalidade:** entrega via e-mail: davy.baia@ceca.ufal.br
+
+**Assunto:** [2026.2.TP] - Trabalho Avaliativo 01.
+
+**Corpo do e-mail:** Nomes dos integrantes em ordem alfabética.

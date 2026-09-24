@@ -1,0 +1,206 @@
+---
+title: "Gabarito — Avaliação 1 — Estruturas de Dados (Aulas 00–04)"
+---
+
+Solução da [Avaliação 1](prova.qmd). Todo o código abaixo foi executado
+e a saída mostrada é exatamente o que o Python produz — não é uma
+estimativa.
+
+## Questão 1 — Fundamentos e funções (2,0 pontos)
+
+```python
+def media(notas):
+    return sum(notas) / len(notas)
+
+def classificar(media_final):
+    if media_final >= 6:
+        return "Aprovado"
+    return "Reprovado"
+
+n = int(input("Quantas notas deseja informar? "))
+notas = []
+for i in range(1, n + 1):
+    nota = float(input(f"Digite a {i}ª nota: "))
+    notas.append(nota)
+
+m = media(notas)
+print(f"Média: {m:.1f}")
+print(f"Situação: {classificar(m)}")
+```
+
+Saída verificada (entrada `3`, `7`, `5`, `8`):
+
+```
+Quantas notas deseja informar? 3
+Digite a 1ª nota: 7
+Digite a 2ª nota: 5
+Digite a 3ª nota: 8
+Média: 6.7
+Situação: Aprovado
+```
+
+Saída verificada, caso reprovado (entrada `2`, `3`, `4`):
+
+```
+Quantas notas deseja informar? 2
+Digite a 1ª nota: 3
+Digite a 2ª nota: 4
+Média: 3.5
+Situação: Reprovado
+```
+
+## Questão 2 — Pilhas (2,0 pontos)
+
+```python
+def decimal_para_binario(n):
+    if n == 0:
+        return "0"
+    pilha = []
+    while n > 0:
+        pilha.append(n % 2)
+        n //= 2
+    binario = ""
+    while pilha:
+        binario += str(pilha.pop())
+    return binario
+
+print(decimal_para_binario(13))
+print(decimal_para_binario(0))
+print(decimal_para_binario(255))
+```
+
+Saída verificada:
+
+```
+1101
+0
+11111111
+```
+
+Note o padrão de pilha clássico: os restos da divisão por 2 são
+empilhados na ordem em que são calculados (do menos significativo para
+o mais significativo), e desempilhar tudo (`pop()` sempre remove o
+último inserido) devolve os dígitos na ordem correta — o mais
+significativo primeiro.
+
+## Questão 3 — Filas (2,5 pontos)
+
+```python
+from collections import deque
+
+def simular_fila_impressao(trabalhos, segundos_por_pagina=2):
+    fila = deque(trabalhos)  # cada trabalho: (nome, paginas)
+    tempo_atual = 0
+    log = []
+    while fila:
+        nome, paginas = fila.popleft()
+        espera = tempo_atual
+        duracao = paginas * segundos_por_pagina
+        tempo_atual += duracao
+        log.append((nome, espera, duracao))
+    return log, tempo_atual
+
+trabalhos = [("relatorio.pdf", 5), ("foto.png", 2), ("apresentacao.pptx", 10)]
+log, tempo_total = simular_fila_impressao(trabalhos)
+for nome, espera, duracao in log:
+    print(f"{nome}: esperou {espera}s, imprimiu em {duracao}s")
+print(f"Tempo total da fila: {tempo_total}s")
+```
+
+Saída verificada:
+
+```
+relatorio.pdf: esperou 0s, imprimiu em 10s
+foto.png: esperou 10s, imprimiu em 4s
+apresentacao.pptx: esperou 14s, imprimiu em 20s
+Tempo total da fila: 34s
+```
+
+Cada trabalho espera exatamente o tempo acumulado de todos os que
+chegaram antes dele na fila — por isso `foto.png` espera 10s (o tempo
+que `relatorio.pdf` levou) e `apresentacao.pptx` espera 14s (10s + 4s).
+
+## Questão 4 — Árvores (2,0 pontos)
+
+```python
+def criar_no(valor):
+    return {"valor": valor, "esquerda": None, "direita": None}
+
+def inserir(no, valor):
+    if no is None:
+        return criar_no(valor)
+    if valor < no["valor"]:
+        no["esquerda"] = inserir(no["esquerda"], valor)
+    elif valor > no["valor"]:
+        no["direita"] = inserir(no["direita"], valor)
+    return no
+
+def contar_nos(no):
+    if no is None:
+        return 0
+    return 1 + contar_nos(no["esquerda"]) + contar_nos(no["direita"])
+
+def soma_valores(no):
+    if no is None:
+        return 0
+    return no["valor"] + soma_valores(no["esquerda"]) + soma_valores(no["direita"])
+
+raiz = None
+for v in [50, 30, 70, 20, 40, 60, 80]:
+    raiz = inserir(raiz, v)
+
+print("Quantidade de nós:", contar_nos(raiz))
+print("Soma dos valores:", soma_valores(raiz))
+```
+
+Saída verificada:
+
+```
+Quantidade de nós: 7
+Soma dos valores: 350
+```
+
+Ambas as funções seguem o mesmo padrão recursivo dos percursos vistos
+em aula: caso base (`no is None`) retorna o elemento neutro (`0`), e o
+caso recursivo combina o nó atual com o resultado das duas subárvores.
+
+## Questão 5 — Tabelas hash (1,5 pontos)
+
+```python
+def contar_frequencia(palavras):
+    frequencia = {}
+    for palavra in palavras:
+        frequencia[palavra] = frequencia.get(palavra, 0) + 1
+    return frequencia
+
+texto = "o rato roeu a roupa do rei de roma o rato roeu"
+palavras = texto.split()
+frequencia = contar_frequencia(palavras)
+
+for palavra, qtd in sorted(frequencia.items()):
+    print(f"{palavra}: {qtd}")
+
+mais_frequente = max(frequencia, key=frequencia.get)
+print(f"Palavra mais frequente: '{mais_frequente}' ({frequencia[mais_frequente]}x)")
+```
+
+Saída verificada:
+
+```
+a: 1
+de: 1
+do: 1
+o: 2
+rato: 2
+rei: 1
+roeu: 2
+roma: 1
+roupa: 1
+Palavra mais frequente: 'o' (2x)
+```
+
+`frequencia.get(palavra, 0)` é o que torna o contador de uma linha só:
+devolve a contagem atual da palavra, ou `0` se ela ainda não apareceu —
+exatamente o mesmo padrão de acesso O(1) por chave estudado na Aula 04.
+Entre `"o"`, `"rato"` e `"roeu"` (todas com 2 ocorrências), `max()`
+retorna a primeira encontrada na ordem de inserção do dicionário — `"o"`.
