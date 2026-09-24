@@ -180,7 +180,7 @@ Compactem todos os arquivos pedidos em uma única pasta `.zip`, nomeada
 
 - Os cinco arquivos `.py` (`questao1.py` a `questao5.py`).
 
-**Prazo:** 29 de setembro de 2026, até às 23:59.
+**Prazo:** 01 de outubro de 2026, até às 23:59.
 
 **Modalidade:** entrega via e-mail: davy.baia@ceca.ufal.br
 
