@@ -1,0 +1,35 @@
+---
+title: "Atividade — Aula 05: Programação Orientada a Objetos"
+---
+
+## Desafio prático: a Fila como classe
+
+Na Aula 01 implementamos uma **fila com nó encadeado** usando
+dicionários e funções soltas (`criar_fila`, `enqueue`, `dequeue`). Agora
+reescreva essa mesma estrutura como uma **classe `Fila`**.
+
+**Requisitos:**
+
+1. Defina `__init__(self)` inicializando três atributos de instância:
+   `_front`, `_rear` e `_tamanho`.
+2. Implemente o método `enqueue(self, item)` — insere `item` no fim da
+   fila. Cada nó pode continuar sendo um dicionário
+   `{"dado": ..., "proximo": ...}` internamente.
+3. Implemente o método `dequeue(self)` — remove e retorna o elemento da
+   frente da fila; deve levantar `IndexError` se a fila estiver vazia.
+4. Implemente `esta_vazia(self)` — retorna `True`/`False`.
+5. Implemente `tamanho(self)` — retorna o número de elementos na fila.
+
+**Observações:**
+
+- Todos os métodos (exceto `__init__`) recebem `self` como primeiro
+  parâmetro e não devem receber a fila como parâmetro separado — ela
+  **é** `self`.
+- Use o underscore (`_front`, `_rear`, `_tamanho`) para indicar que esses
+  atributos são detalhes internos da classe, não a interface pública.
+
+Teste criando uma instância de `Fila`, inserindo pelo menos 4 elementos e
+removendo todos, imprimindo cada remoção na ordem em que ocorre (deve
+respeitar o princípio FIFO).
+
+Confira o [gabarito](gabarito.qmd) depois de tentar resolver.

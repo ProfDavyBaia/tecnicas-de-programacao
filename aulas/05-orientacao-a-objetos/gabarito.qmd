@@ -1,0 +1,80 @@
+---
+title: "Gabarito — Aula 05: Programação Orientada a Objetos"
+---
+
+Solução da [atividade desta aula](atividade.qmd). O código abaixo foi
+executado e a saída mostrada é exatamente o que o Python produz.
+
+## Classe `Fila`
+
+```python
+class Fila:
+    def __init__(self):
+        self._front = None
+        self._rear = None
+        self._tamanho = 0
+
+    def enqueue(self, item):
+        novo = {"dado": item, "proximo": None}
+        if self._rear:
+            self._rear["proximo"] = novo
+        self._rear = novo
+        if not self._front:
+            self._front = novo
+        self._tamanho += 1
+
+    def dequeue(self):
+        if not self._front:
+            raise IndexError("Fila vazia!")
+        dado = self._front["dado"]
+        self._front = self._front["proximo"]
+        if not self._front:
+            self._rear = None
+        self._tamanho -= 1
+        return dado
+
+    def esta_vazia(self):
+        return self._tamanho == 0
+
+    def tamanho(self):
+        return self._tamanho
+```
+
+## Teste e saída verificada
+
+```python
+fila = Fila()
+for nome in ["João", "Maria", "Pedro", "Ana"]:
+    fila.enqueue(nome)
+
+print("Tamanho da fila:", fila.tamanho())
+while not fila.esta_vazia():
+    print("Atendendo:", fila.dequeue())
+print("Fila vazia?", fila.esta_vazia())
+```
+
+Saída verificada:
+
+```
+Tamanho da fila: 4
+Atendendo: João
+Atendendo: Maria
+Atendendo: Pedro
+Atendendo: Ana
+Fila vazia? True
+```
+
+Note que a estrutura interna (`_front`, `_rear`, nós como dicionários)
+é idêntica à versão funcional da Aula 01 — a diferença é que agora
+dados e comportamento estão agrupados em `self`, e quem usa a classe não
+precisa carregar o dicionário da fila manualmente de função em função:
+basta chamar `fila.enqueue(...)` e `fila.dequeue()`.
+
+## Por que `IndexError` e não deixar o programa quebrar silenciosamente?
+
+Levantar `IndexError` explicitamente em `dequeue()` quando a fila está
+vazia segue o mesmo princípio aplicado nas estruturas funcionais das
+aulas anteriores: um erro claro, no momento certo, é preferível a um
+comportamento indefinido mais adiante no programa. Quem usa a classe
+pode (e deve) checar `esta_vazia()` antes de chamar `dequeue()` quando
+não tiver certeza.

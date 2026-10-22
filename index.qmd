@@ -99,6 +99,22 @@ aplicações em engenharia.
 </div>
 :::
 
+:::{.aula-card}
+<div class="numero">05</div>
+<div>
+<strong>Programação orientada a objetos</strong>
+
+Classe e objeto, construtor `__init__` e `self`, métodos, encapsulamento
+por convenção, comparação com o estilo funcional das aulas anteriores e
+aplicações em engenharia.
+
+<span class="links">[Slides](aulas/05-orientacao-a-objetos/aula.html) ·
+[Notas](aulas/05-orientacao-a-objetos/notas.qmd) ·
+[Atividade](aulas/05-orientacao-a-objetos/atividade.qmd) ·
+[Gabarito](aulas/05-orientacao-a-objetos/gabarito.qmd)</span>
+</div>
+:::
+
 <!-- Duplique o bloco ":::{.aula-card} ... :::" acima para cada nova aula -->
 
 ## Ementa {#ementa}
@@ -119,6 +135,7 @@ aplicações em engenharia.
 | 3      |      | Filas na prática: BFS, filas de prioridade e escalonamento |
 | 4      |      | Árvores |
 | 5      |      | Tabelas hash |
+| 6      |      | Programação orientada a objetos |
 
 ## Avaliação {#avaliacao}
 

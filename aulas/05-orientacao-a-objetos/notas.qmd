@@ -1,0 +1,298 @@
+---
+title: "Notas — Aula 05: Programação Orientada a Objetos"
+---
+
+## Motivação
+
+Até aqui (Aulas 00–04), toda estrutura de dados foi representada como um
+**dicionário**, e toda operação como uma **função separada** que recebe
+esse dicionário como parâmetro: `push(pilha, item)`,
+`inserir(tabela, chave, valor)`.
+
+Esse estilo funciona bem e deixa claro, desde o início, o que realmente
+acontece "por baixo do capô" — mas tem um custo: dados e comportamento
+vivem separados, e é responsabilidade de quem programa lembrar qual
+conjunto de funções pertence a qual dicionário.
+
+**Programação orientada a objetos (POO)** é um modelo de programação que
+resolve isso agrupando dados e comportamento numa única unidade: o
+**objeto**. É um dos três tópicos centrais da ementa desta disciplina,
+junto com estruturas de dados e algoritmos de ordenação.
+
+## Classe e objeto
+
+Uma **classe** é o molde — a definição de quais atributos (dados) e
+métodos (comportamentos) um tipo de objeto vai ter. Um **objeto** (ou
+**instância**) é uma ocorrência concreta, construída a partir da classe,
+com seus próprios valores para os atributos.
+
+> Analogia: a classe é a planta de uma casa; cada casa construída a
+> partir dela é um objeto — mesma estrutura, estados (móveis,
+> moradores) diferentes.
+
+```python
+class Pilha:
+    pass  # ainda sem atributos ou métodos
+
+p1 = Pilha()
+p2 = Pilha()
+print(p1 is p2)  # False — são objetos distintos
+```
+
+## O construtor `__init__` e `self`
+
+Toda classe em Python pode definir um método especial `__init__`,
+chamado automaticamente quando um objeto é criado — é aqui que os
+**atributos de instância** são inicializados.
+
+`self` é o primeiro parâmetro de todo método: representa o **próprio
+objeto** sobre o qual o método está sendo chamado. O Python o passa
+automaticamente — quem chama o método nunca o informa explicitamente.
+
+```python
+class Pilha:
+    def __init__(self):
+        self._dados = []  # atributo de instância
+
+p = Pilha()
+print(p._dados)  # []
+```
+
+## Métodos: comportamento junto aos dados
+
+Um **método** é uma função definida dentro da classe, que opera sobre os
+atributos daquele objeto específico através de `self`:
+
+```python
+class Pilha:
+    def __init__(self):
+        self._dados = []
+
+    def push(self, item):
+        self._dados.append(item)
+
+    def pop(self):
+        if not self._dados:
+            raise IndexError("Underflow!")
+        return self._dados.pop()
+
+    def peek(self):
+        return self._dados[-1]
+
+    def is_empty(self):
+        return len(self._dados) == 0
+```
+
+Note que `item` é passado explicitamente em `p.push(10)`, mas `self`
+nunca aparece na chamada — somente na definição do método.
+
+## Comparando os dois estilos
+
+Lado a lado, a Pilha da Aula 01 (dicionário + funções) e a mesma Pilha
+como classe:
+
+```python
+# Estilo funcional (Aula 01)
+p = []
+push(p, 5)
+push(p, 10)
+print(peek(p))  # 10 — "peek" e "p" são conceitos separados
+```
+
+```python
+# Estilo orientado a objetos (Aula 05)
+p = Pilha()
+p.push(5)
+p.push(10)
+print(p.peek())  # 10 — "peek" pertence a "p"
+```
+
+A operação e o dado deixam de ser duas coisas separadas (uma função, um
+dicionário) e passam a ser uma coisa só: o objeto `p` "sabe" empilhar e
+desempilhar sozinho.
+
+Testando a classe:
+
+```python
+p = Pilha()
+p.push(5)
+p.push(10)
+print(p.peek())      # 10
+print(p.pop())        # 10
+print(p.is_empty())   # False
+```
+
+```
+10
+10
+False
+```
+
+## Múltiplas instâncias independentes
+
+Cada objeto carrega o **seu próprio estado** — não há risco de confundir
+qual dicionário pertence a qual pilha, porque não existem dicionários
+soltos sendo passados entre funções:
+
+```python
+p1 = Pilha()
+p2 = Pilha()
+p1.push("A")
+p2.push("B")
+print(p1.peek(), p2.peek())
+```
+
+```
+A B
+```
+
+## Encapsulamento por convenção
+
+Em Python não existe atributo verdadeiramente "privado" (como em Java ou
+C++), mas há uma **convenção** amplamente respeitada: um atributo cujo
+nome começa com `_` (underscore) é um **detalhe interno** da classe —
+quem usa a classe não deve acessá-lo ou modificá-lo diretamente.
+
+```python
+p = Pilha()
+p.push(1)
+print(p._dados)   # funciona, mas é "malvisto" — não é a interface pública
+print(p.peek())    # forma correta: usar o método
+```
+
+A ideia: o objeto expõe **métodos** (`push`, `pop`, `peek`, `is_empty`)
+como sua interface pública, e esconde a estrutura interna (`_dados`) que
+pode mudar de implementação sem afetar quem usa a classe.
+
+## Vantagens da orientação a objetos
+
+- **Encapsulamento** — dados e comportamento vivem juntos; a
+  implementação interna pode mudar sem afetar quem usa a classe.
+- **Organização** — cada conceito do domínio (pilha, sensor, motor) se
+  torna um tipo próprio no código, mais fácil de localizar e manter.
+- **Múltiplas instâncias** — cada objeto tem seu próprio estado, sem
+  risco de misturar dados de instâncias diferentes.
+- **Interface clara** — métodos documentam o que se pode fazer com o
+  objeto, sem expor os detalhes internos.
+
+## Aplicações em engenharia
+
+Sistemas de engenharia são naturalmente modelados como **conjuntos de
+objetos com estado e comportamento próprios**: um sensor tem leituras e
+sabe calcular sua própria média; um motor tem um estado
+(ligado/desligado) e sabe ligar/desligar a si mesmo.
+
+```python
+class Sensor:
+    def __init__(self, nome, unidade):
+        self.nome = nome
+        self.unidade = unidade
+        self._leituras = []
+
+    def registrar(self, valor):
+        self._leituras.append(valor)
+
+    def media(self):
+        if not self._leituras:
+            return 0
+        return sum(self._leituras) / len(self._leituras)
+
+    def ultima_leitura(self):
+        return self._leituras[-1] if self._leituras else None
+```
+
+Testando com duas instâncias independentes:
+
+```python
+temp = Sensor("Temperatura", "°C")
+temp.registrar(24.5)
+temp.registrar(25.1)
+temp.registrar(24.8)
+print(f"{temp.nome}: última leitura = {temp.ultima_leitura()} {temp.unidade}, média = {temp.media():.2f} {temp.unidade}")
+
+umidade = Sensor("Umidade", "%")
+umidade.registrar(58)
+umidade.registrar(62)
+print(f"{umidade.nome}: média = {umidade.media():.1f} {umidade.unidade}")
+```
+
+```
+Temperatura: última leitura = 24.8 °C, média = 24.80 °C
+Umidade: média = 60.0 %
+```
+
+Cada instância de `Sensor` (`temp`, `umidade`) mantém sua própria lista
+de leituras — exatamente o mesmo princípio da Pilha, aplicado a um
+domínio de engenharia.
+
+## Exercício final
+
+Reescreva a **Fila com nó encadeado** (vista na Aula 01, com
+dicionários) como uma **classe `Fila`**, com atributos internos
+`_front`, `_rear`, `_tamanho`, e métodos `enqueue`, `dequeue`,
+`esta_vazia` e `tamanho`.
+
+**Resumo da aula:** uma classe agrupa dados (atributos) e comportamento
+(métodos) em uma única unidade; `__init__` inicializa os atributos de um
+novo objeto; `self` refere-se ao próprio objeto dentro de um método; o
+underscore (`_atributo`) é a convenção para sinalizar "uso interno". POO
+não substitui o estilo funcional das aulas anteriores — é outra
+ferramenta, mais adequada quando dados e comportamento pertencem
+naturalmente juntos.
+
+## Gabarito do exercício final
+
+```python
+class Fila:
+    def __init__(self):
+        self._front = None
+        self._rear = None
+        self._tamanho = 0
+
+    def enqueue(self, item):
+        novo = {"dado": item, "proximo": None}
+        if self._rear:
+            self._rear["proximo"] = novo
+        self._rear = novo
+        if not self._front:
+            self._front = novo
+        self._tamanho += 1
+
+    def dequeue(self):
+        if not self._front:
+            raise IndexError("Fila vazia!")
+        dado = self._front["dado"]
+        self._front = self._front["proximo"]
+        if not self._front:
+            self._rear = None
+        self._tamanho -= 1
+        return dado
+
+    def esta_vazia(self):
+        return self._tamanho == 0
+
+    def tamanho(self):
+        return self._tamanho
+```
+
+Teste e saída verificada:
+
+```python
+fila = Fila()
+for nome in ["João", "Maria", "Pedro", "Ana"]:
+    fila.enqueue(nome)
+
+print("Tamanho da fila:", fila.tamanho())
+while not fila.esta_vazia():
+    print("Atendendo:", fila.dequeue())
+print("Fila vazia?", fila.esta_vazia())
+```
+
+```
+Tamanho da fila: 4
+Atendendo: João
+Atendendo: Maria
+Atendendo: Pedro
+Atendendo: Ana
+Fila vazia? True
+```
