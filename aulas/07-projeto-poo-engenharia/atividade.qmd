@@ -1,0 +1,74 @@
+---
+title: "Trabalho Avaliativo — Aula 07: Sistema de Proteção Elétrica Orientado a Objetos"
+---
+
+## Tema: sistema de proteção contra sobrecorrente
+
+**Trabalho individual.** Seguindo o mesmo processo visto na aula
+(requisitos → classes → hierarquia/composição → implementação →
+teste), desenvolva um pequeno **sistema de proteção contra
+sobrecorrente** para um painel elétrico.
+
+**Requisito:** o sistema deve monitorar a corrente elétrica de um
+circuito e, quando a corrente atingir ou ultrapassar um limite definido,
+desarmar automaticamente um disjuntor — protegendo o circuito. Quando a
+corrente voltar a um valor seguro, o disjuntor deve poder ser rearmado.
+
+## Classes exigidas
+
+1. **`Dispositivo`** (classe base)
+   - Atributos: `id`, `localizacao`.
+   - Método `status()`: deve levantar `NotImplementedError` — cada
+     subclasse implementa o seu.
+
+2. **`SensorCorrente`** (deriva de `Dispositivo`)
+   - Reaproveita `id` e `localizacao` de `Dispositivo` via `super()`.
+   - Atributo interno (encapsulado): última leitura de corrente, em
+     Amperes.
+   - Método `medir(valor)`: registra uma nova leitura.
+   - Método `status()`: descreve a última leitura registrada (ou que
+     ainda não há leitura, se for o caso).
+
+3. **`AtuadorDisjuntor`** (deriva de `Dispositivo`)
+   - Reaproveita `id` e `localizacao` de `Dispositivo` via `super()`.
+   - Atributo interno (encapsulado): se está armado ou desarmado.
+   - Métodos `desarmar()` e `rearmar()`.
+   - Método `status()`: descreve se está armado ou desarmado.
+
+4. **`ControladorProtecao`** (**não** deriva de `Dispositivo` — usa
+   composição, como o `ControladorIluminacao` da aula)
+   - Recebe, no construtor, um `SensorCorrente`, um `AtuadorDisjuntor`
+     e um limite de corrente (em Amperes).
+   - Método `avaliar(corrente)`: registra a leitura no sensor; se a
+     corrente for maior ou igual ao limite, desarma o disjuntor;
+     caso contrário, mantém (ou rearma) o disjuntor.
+   - Método `relatorio()`: retorna o status do sensor e do atuador.
+
+## Teste exigido
+
+Simule pelo menos 5 leituras de corrente diferentes, chamando
+`avaliar()` para cada uma e imprimindo o relatório a cada chamada.
+O conjunto de leituras deve incluir pelo menos uma corrente que
+ultrapasse o limite escolhido (disjuntor desarma) e uma leitura
+posterior que volte a um valor seguro (disjuntor rearma).
+
+**Requisitos de código:**
+
+- `ControladorProtecao` nunca deve acessar diretamente os atributos
+  internos de `SensorCorrente` ou `AtuadorDisjuntor` — apenas através
+  dos métodos (`medir`, `status`, `desarmar`, `rearmar`).
+- As quatro classes e o teste devem estar em um único arquivo `.py`.
+
+## Entrega
+
+Compacte o arquivo `.py` em uma única pasta `.zip`, nomeada
+`TrabalhoPOO_SistemaProtecao.zip`.
+
+**Prazo:** 04 de novembro de 2026, até às 23:59.
+
+**Modalidade:** entrega via e-mail: [davy.baia@ceca.ufal.br](mailto:davy.baia@ceca.ufal.br)
+
+**Assunto:** [2026.2.TP] - Trabalho Avaliativo POO.
+
+**Corpo do e-mail:** Nome do aluno ou aluna que desenvolveu o
+trabalho.

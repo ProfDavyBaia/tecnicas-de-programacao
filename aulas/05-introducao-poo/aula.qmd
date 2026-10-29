@@ -1,0 +1,229 @@
+---
+title: "Aula 05 — Introdução à Programação Orientada a Objetos"
+subtitle: "Paradigma, classe e objeto, e os quatro pilares da POO"
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    transition: fade
+    css: ../../styles-slides.css
+---
+
+## Agenda da Aula
+
+1. O que é um paradigma de programação
+2. O que fizemos até aqui — paradigma procedural/funcional
+3. Pensando em objetos: estado e comportamento
+4. Classe e objeto, revisitados
+5. Os quatro pilares da POO
+6. Aplicações em engenharia
+7. Atividade final — modelando um domínio com objetos
+
+## O Que É um Paradigma de Programação?
+
+Um **paradigma de programação** é uma forma de pensar e organizar a
+solução de um problema em código — não é uma linguagem, mas um
+**estilo**, um conjunto de princípios que guia como o código é
+estruturado.
+
+- **Paradigma procedural/funcional** — o programa é uma sequência de
+  passos e funções que operam sobre dados.
+- **Paradigma orientado a objetos** — o programa é um conjunto de
+  objetos que interagem, cada um responsável pelo seu próprio estado e
+  comportamento.
+
+Nenhum paradigma é "melhor" em absoluto — cada um se encaixa melhor em
+diferentes tipos de problema, e frequentemente são combinados na mesma
+linguagem, como o próprio Python.
+
+## O Que Fizemos Até Aqui (Aulas 00–04)
+
+Nas aulas anteriores usamos o paradigma procedural/funcional: pilhas,
+filas, árvores e tabelas hash foram representadas como **dicionários**,
+e cada operação como uma **função separada** que recebe esse dicionário
+como parâmetro.
+
+> `push(pilha, item)`, `inserir(tabela, chave, valor)` — dados e
+> comportamento vivem separados.
+
+Esse estilo é direto e deixa claro o que acontece internamente — mas,
+conforme sistemas crescem, a separação entre "o que são os dados" e "o
+que se pode fazer com eles" se torna mais difícil de organizar.
+
+## Pensando em Objetos
+
+A programação orientada a objetos propõe outra forma de modelar o
+problema: identificar as **entidades** do domínio (coisas que existem no
+problema que você está resolvendo) e representá-las como objetos, que
+combinam:
+
+- **Estado** — os dados daquele objeto específico (seus atributos)
+- **Comportamento** — o que esse objeto é capaz de fazer (seus métodos)
+
+> Um motor tem um estado (velocidade, temperatura, ligado/desligado) e
+> um comportamento (ligar, desligar, acelerar). Um sensor tem um estado
+> (histórico de leituras) e um comportamento (registrar leitura,
+> calcular média).
+
+## Classe e Objeto, Revisitados
+
+- **Classe** — a descrição geral de um tipo de entidade: quais
+  atributos e métodos ela tem. É o molde, a "planta".
+- **Objeto (instância)** — uma ocorrência concreta daquela classe, com
+  valores próprios para seus atributos.
+
+```
+Classe: Motor
+  atributos: velocidade, temperatura, ligado
+  métodos:   ligar(), desligar(), acelerar()
+
+Objeto: motor_1  →  velocidade=0,    temperatura=25°C, ligado=False
+Objeto: motor_2  →  velocidade=1800, temperatura=68°C, ligado=True
+```
+
+Cada objeto é independente — alterar `motor_1` não afeta `motor_2`,
+mesmo que ambos sigam a mesma "planta" (classe).
+
+## Os Quatro Pilares da POO
+
+A programação orientada a objetos costuma ser descrita através de
+quatro princípios fundamentais:
+
+1. **Abstração**
+2. **Encapsulamento**
+3. **Herança**
+4. **Polimorfismo**
+
+Vamos ver cada um conceitualmente — a implementação em Python desses
+princípios é o assunto da próxima aula.
+
+## Pilar 1: Abstração
+
+**Abstração** é o processo de identificar, a partir de um problema real,
+apenas as características **relevantes** para o que se está modelando —
+ignorando detalhes irrelevantes ao contexto.
+
+> Num sistema de controle de acesso de um estacionamento, um `Carro` só
+> precisa de `placa`, `modelo` e `horario_entrada`. Detalhes como cor da
+> pintura ou potência do motor são irrelevantes **para esse sistema** —
+> mesmo sendo características reais do carro.
+
+A abstração certa depende do problema: o mesmo "carro" pode precisar de
+atributos completamente diferentes em um sistema de estacionamento e em
+um sistema de simulação de tráfego.
+
+## Pilar 2: Encapsulamento
+
+**Encapsulamento** é agrupar dados e comportamento numa única unidade (o
+objeto) e controlar o acesso a esses dados — o objeto expõe uma
+**interface pública** (o que se pode fazer com ele) e esconde os
+detalhes internos de **como** isso é feito.
+
+> Um `Sensor` expõe um método para consultar sua média de leituras, mas
+> quem usa o sensor não precisa (e não deveria) saber que, internamente,
+> essa média é calculada a partir de uma lista de leituras armazenada.
+
+Vantagem prática: a implementação interna pode mudar completamente sem
+afetar quem usa o objeto — desde que a interface pública continue a
+mesma.
+
+## Pilar 3: Herança
+
+**Herança** permite que uma classe seja definida a partir de outra,
+reaproveitando seus atributos e métodos e, opcionalmente, especializando
+ou estendendo o comportamento.
+
+```
+Classe base:     Veiculo        (atributos: velocidade; métodos: mover())
+Classe derivada: Carro          (herda de Veiculo, adiciona: numero_de_portas)
+Classe derivada: Motocicleta    (herda de Veiculo, adiciona: tem_sidecar)
+```
+
+`Carro` e `Motocicleta` **são** tipos de `Veiculo` — herdam tudo o que um
+`Veiculo` já tem, sem precisar redefinir `velocidade` ou `mover()` do
+zero.
+
+## Pilar 4: Polimorfismo
+
+**Polimorfismo** ("muitas formas") é a capacidade de objetos de classes
+diferentes responderem de formas diferentes à mesma operação, chamada da
+mesma maneira.
+
+> Tanto `Carro` quanto `Motocicleta` têm um método `mover()` — mas cada
+> um se move de um jeito diferente. Quem chama `veiculo.mover()` não
+> precisa saber qual é o tipo exato do veículo.
+
+Isso permite escrever código genérico que funciona para qualquer
+`Veiculo`, mesmo que novos tipos sejam adicionados depois.
+
+## Os Quatro Pilares — Resumo
+
+| Pilar | Pergunta que responde |
+|---|---|
+| Abstração | O que é relevante modelar sobre essa entidade? |
+| Encapsulamento | O que o objeto expõe, e o que ele esconde? |
+| Herança | O que esse tipo de objeto reaproveita de outro mais geral? |
+| Polimorfismo | Como objetos diferentes respondem à mesma operação? |
+
+## Aplicações em Engenharia
+
+Sistemas de engenharia costumam ter hierarquias naturais de entidades, o
+que torna a POO um modelo de pensamento especialmente útil:
+
+- **Automação residencial/industrial** — `Dispositivo` como classe
+  base, com `Sensor` e `Atuador` como especializações (herança); cada
+  tipo de sensor responde de forma diferente ao ser consultado
+  (polimorfismo)
+- **Simulação de circuitos** — `Componente` como classe base, com
+  `Resistor`, `Capacitor` e `Indutor` como especializações, cada um com
+  sua própria equação de comportamento
+- **Sistemas de controle industrial** — cada `Atuador` (motor, válvula,
+  relé) expõe a mesma interface (ligar, desligar, consultar status),
+  escondendo como cada um é efetivamente acionado (encapsulamento)
+
+## Atividade Final
+
+Modele, **sem escrever código**, um pequeno domínio de engenharia à sua
+escolha (sugestões: uma oficina mecânica, uma usina solar, uma casa
+inteligente, um sistema de monitoramento agrícola) usando os quatro
+pilares da POO.
+
+**Resumo:** POO é um paradigma que modela o problema como objetos com
+estado (atributos) e comportamento (métodos). Os quatro pilares —
+abstração, encapsulamento, herança e polimorfismo — orientam como
+identificar essas entidades e organizá-las. Na próxima aula veremos como
+tudo isso se traduz em código Python: `class`, `__init__`, `self` e
+métodos.
+
+## Atividade Final — Gabarito (exemplo de modelagem)
+
+**Domínio escolhido: sistema de monitoramento de uma fazenda
+inteligente.**
+
+- **Classe base `Dispositivo`** — *abstração*: todo dispositivo
+  instalado na fazenda tem, no mínimo, um identificador e uma
+  localização.
+  - Atributos: `id`, `localizacao`
+  - Métodos: `status()`
+
+- **Classe derivada `SensorSolo`** (herda de `Dispositivo`) —
+  *herança*: reaproveita `id` e `localizacao`, sem precisar redefini-los.
+  - Atributo adicional (encapsulado): `_ultima_leitura_umidade`
+  - Método adicional: `ler()`
+
+- **Classe derivada `AtuadorIrrigacao`** (herda de `Dispositivo`) —
+  também especializa `Dispositivo`.
+  - Atributo adicional (encapsulado): `_esta_ligado`
+  - Métodos adicionais: `ligar()`, `desligar()`
+
+- **Polimorfismo** — tanto `SensorSolo` quanto `AtuadorIrrigacao`
+  implementam `status()` (herdado de `Dispositivo`) de um jeito
+  diferente: em `SensorSolo`, `status()` descreve a última leitura de
+  umidade; em `AtuadorIrrigacao`, `status()` descreve se a irrigação
+  está ligada ou desligada. Quem chama `dispositivo.status()` não
+  precisa saber qual dos dois tipos recebeu.
+
+- **Encapsulamento** — `_ultima_leitura_umidade` e `_esta_ligado` são
+  detalhes internos: quem usa os objetos só deveria interagir com eles
+  através de `ler()`, `ligar()`, `desligar()` e `status()`, nunca
+  lendo ou alterando esses atributos diretamente.

@@ -1,0 +1,32 @@
+---
+title: "Atividade — Aula 05: Introdução à Programação Orientada a Objetos"
+---
+
+## Desafio conceitual: modelando um domínio com objetos
+
+Escolha um pequeno domínio de engenharia (sugestões: uma oficina
+mecânica, uma usina solar, uma casa inteligente, um sistema de
+monitoramento agrícola, ou outro de sua preferência) e modele-o usando
+os quatro pilares da POO — **sem escrever código**, apenas descrevendo
+o modelo.
+
+**Entregue:**
+
+1. **Abstração:** liste de 2 a 4 classes que fariam parte do seu
+   domínio, e para cada uma, pelo menos 2 atributos e 2 métodos
+   relevantes para o problema escolhido.
+2. **Herança:** indique se existe uma relação entre alguma das classes
+   listadas (uma classe base e uma ou mais classes derivadas) — não
+   precisa envolver todas as classes.
+3. **Polimorfismo:** indique pelo menos um método que seria
+   implementado de forma diferente por duas classes derivadas, mesmo
+   sendo chamado da mesma maneira.
+4. **Encapsulamento:** indique, para pelo menos uma classe, quais
+   atributos seriam "escondidos" (detalhes internos) e só acessíveis
+   através de métodos.
+
+Não há necessidade de código Python nesta atividade — o objetivo é
+praticar a identificação dos quatro pilares em um domínio real antes de
+formalizá-los em Python, na Aula 06.
+
+Confira o [gabarito](gabarito.qmd) depois de tentar resolver.

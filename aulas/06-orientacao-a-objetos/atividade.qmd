@@ -1,5 +1,5 @@
 ---
-title: "Atividade — Aula 05: Programação Orientada a Objetos"
+title: "Atividade — Aula 06: Programação Orientada a Objetos"
 ---
 
 ## Desafio prático: a Fila como classe

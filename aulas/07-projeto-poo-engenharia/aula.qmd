@@ -1,0 +1,222 @@
+---
+title: "Aula 07 — Desenvolvendo um Sistema Orientado a Objetos"
+subtitle: "Do levantamento de requisitos ao código: um estudo de caso em automação elétrica"
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    transition: fade
+    css: ../../styles-slides.css
+---
+
+## Agenda da Aula
+
+1. Revisão rápida — os quatro pilares na prática
+2. Do problema ao código: etapas do desenvolvimento de um sistema OO
+3. Estudo de caso: sistema de iluminação automática
+4. Levantando requisitos e identificando classes
+5. Implementando a hierarquia de classes
+6. Compondo o sistema: o Controlador
+7. Testando o sistema completo
+8. O Trabalho Avaliativo
+
+## Revisão Rápida
+
+Nas Aulas 05 e 06 vimos:
+
+- **Classe/objeto** — o molde e suas instâncias
+- **Abstração** — escolher o que é relevante modelar
+- **Encapsulamento** — esconder detalhes internos (`_atributo`), expor
+  métodos
+- **Herança** — reaproveitar atributos/métodos de uma classe base
+- **Polimorfismo** — mesma chamada, comportamentos diferentes por tipo
+
+Hoje vamos aplicar tudo isso junto, construindo um sistema **completo**,
+do requisito ao código testado.
+
+## Do Problema ao Código: Etapas do Desenvolvimento
+
+1. **Levantar requisitos** — o que o sistema precisa fazer?
+2. **Identificar as entidades (classes)** — abstração
+3. **Definir atributos e métodos** de cada classe
+4. **Identificar hierarquias** (herança) e **composições** entre objetos
+5. **Implementar** em Python
+6. **Testar** com cenários realistas
+
+Esse processo vale tanto para um sistema pequeno de duas classes quanto
+para sistemas de engenharia muito maiores.
+
+## Estudo de Caso: Sistema de Iluminação Automática
+
+**Requisito:** projetar um sistema que ligue automaticamente uma
+lâmpada quando o nível de luminosidade do ambiente cair abaixo de um
+limite, e desligue quando estiver acima.
+
+**Entidades identificadas (abstração):**
+
+- `Dispositivo` (base) — todo dispositivo tem um identificador e uma
+  localização.
+- `SensorLuminosidade` (deriva de `Dispositivo`) — mede luminosidade.
+- `AtuadorLampada` (deriva de `Dispositivo`) — liga/desliga a lâmpada.
+- `ControladorIluminacao` — **não** é um `Dispositivo`; ele coordena um
+  sensor e um atuador.
+
+## Implementando a Hierarquia — `Dispositivo`
+
+```python
+class Dispositivo:
+    def __init__(self, id, localizacao):
+        self.id = id
+        self.localizacao = localizacao
+
+    def status(self):
+        raise NotImplementedError("Subclasses devem implementar status()")
+```
+
+`raise NotImplementedError` sinaliza que `Dispositivo` define a
+**interface** (todo dispositivo tem `status()`), mas cada subclasse
+deve fornecer sua própria implementação — um uso prático do
+polimorfismo.
+
+```python
+d = Dispositivo("X1", "Sala")
+d.status()  # levanta NotImplementedError
+```
+
+```
+Erro: Subclasses devem implementar status()
+```
+
+## Implementando a Hierarquia — Sensor e Atuador
+
+```python
+class SensorLuminosidade(Dispositivo):
+    def __init__(self, id, localizacao):
+        super().__init__(id, localizacao)
+        self._ultima_leitura = None
+
+    def medir(self, valor):
+        self._ultima_leitura = valor
+
+    def status(self):
+        if self._ultima_leitura is None:
+            return f"Sensor {self.id} ({self.localizacao}): sem leitura"
+        return f"Sensor {self.id} ({self.localizacao}): {self._ultima_leitura} lux"
+
+
+class AtuadorLampada(Dispositivo):
+    def __init__(self, id, localizacao):
+        super().__init__(id, localizacao)
+        self._ligada = False
+
+    def ligar(self):
+        self._ligada = True
+
+    def desligar(self):
+        self._ligada = False
+
+    def status(self):
+        estado = "ligada" if self._ligada else "desligada"
+        return f"Lâmpada {self.id} ({self.localizacao}): {estado}"
+```
+
+`super().__init__(...)` chama o construtor da classe base,
+reaproveitando a inicialização de `id` e `localizacao` sem repetir
+código.
+
+## Compondo o Sistema — o Controlador
+
+```python
+class ControladorIluminacao:
+    def __init__(self, sensor, atuador, limite):
+        self._sensor = sensor
+        self._atuador = atuador
+        self._limite = limite
+
+    def avaliar(self, luminosidade):
+        self._sensor.medir(luminosidade)
+        if luminosidade < self._limite:
+            self._atuador.ligar()
+        else:
+            self._atuador.desligar()
+
+    def relatorio(self):
+        return [self._sensor.status(), self._atuador.status()]
+```
+
+O `ControladorIluminacao` **não herda** de `Dispositivo` — ele
+**contém** um sensor e um atuador como atributos. Essa relação chama-se
+**composição**: um objeto é formado por outros objetos, em vez de
+herdar deles. Na prática de projetar sistemas, composição é tão comum
+quanto herança.
+
+## Testando o Sistema Completo
+
+```python
+sensor = SensorLuminosidade("S1", "Corredor Principal")
+atuador = AtuadorLampada("L1", "Corredor Principal")
+controlador = ControladorIluminacao(sensor, atuador, limite=300)
+
+for luminosidade in [500, 320, 180, 90, 310]:
+    controlador.avaliar(luminosidade)
+    for linha in controlador.relatorio():
+        print(linha)
+    print("---")
+```
+
+Saída verificada:
+
+```
+Sensor S1 (Corredor Principal): 500 lux
+Lâmpada L1 (Corredor Principal): desligada
+---
+Sensor S1 (Corredor Principal): 320 lux
+Lâmpada L1 (Corredor Principal): desligada
+---
+Sensor S1 (Corredor Principal): 180 lux
+Lâmpada L1 (Corredor Principal): ligada
+---
+Sensor S1 (Corredor Principal): 90 lux
+Lâmpada L1 (Corredor Principal): ligada
+---
+Sensor S1 (Corredor Principal): 310 lux
+Lâmpada L1 (Corredor Principal): desligada
+---
+```
+
+Note como o `ControladorIluminacao` nunca manipula `_ultima_leitura` ou
+`_ligada` diretamente — ele só chama `medir()`, `ligar()`, `desligar()`
+e `status()`: a interface pública de cada objeto (encapsulamento).
+
+## Resumo do Processo
+
+- **Abstração** → quais classes o domínio precisa (`Dispositivo`,
+  sensor, atuador).
+- **Herança** → `SensorLuminosidade` e `AtuadorLampada` reaproveitam
+  `Dispositivo`.
+- **Polimorfismo** → cada subclasse implementa `status()` do seu jeito.
+- **Encapsulamento** → atributos internos (`_ultima_leitura`,
+  `_ligada`) só são tocados através de métodos.
+- **Composição** → `ControladorIluminacao` coordena sensor e atuador
+  sem herdar de `Dispositivo`.
+
+Esse é exatamente o processo que vocês vão aplicar no trabalho
+avaliativo — para um sistema diferente deste.
+
+## O Trabalho Avaliativo
+
+Vocês vão repetir esse mesmo processo — levantar requisitos, identificar
+classes, definir hierarquia e composição, implementar e testar — para
+um **sistema de proteção elétrica**, diferente do exemplo de iluminação
+visto hoje.
+
+Os detalhes completos (requisitos, classes esperadas e entrega) estão na
+[atividade](atividade.qmd) desta aula.
+
+**Resumo da aula:** desenvolver um sistema orientado a objetos segue um
+processo: levantar requisitos, identificar classes (abstração), definir
+hierarquias (herança) e composições entre objetos, implementar e
+testar. Um `raise NotImplementedError` numa classe base formaliza que
+toda subclasse deve implementar aquele método (polimorfismo); e nem
+todo objeto precisa herdar de outro — muitas vezes a relação certa é
+"ter um" (composição), não "ser um" (herança).

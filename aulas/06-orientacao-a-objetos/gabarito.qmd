@@ -1,5 +1,5 @@
 ---
-title: "Gabarito — Aula 05: Programação Orientada a Objetos"
+title: "Gabarito — Aula 06: Programação Orientada a Objetos"
 ---
 
 Solução da [atividade desta aula](atividade.qmd). O código abaixo foi

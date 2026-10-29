@@ -1,0 +1,117 @@
+---
+title: "Gabarito — Trabalho Avaliativo (Aula 07): Sistema de Proteção Elétrica"
+---
+
+Solução de referência do [trabalho avaliativo](atividade.qmd). O código
+abaixo foi executado e a saída mostrada é exatamente o que o Python
+produz.
+
+## As quatro classes
+
+```python
+class Dispositivo:
+    def __init__(self, id, localizacao):
+        self.id = id
+        self.localizacao = localizacao
+
+    def status(self):
+        raise NotImplementedError("Subclasses devem implementar status()")
+
+
+class SensorCorrente(Dispositivo):
+    def __init__(self, id, localizacao):
+        super().__init__(id, localizacao)
+        self._ultima_leitura = None
+
+    def medir(self, valor):
+        self._ultima_leitura = valor
+
+    def status(self):
+        if self._ultima_leitura is None:
+            return f"Sensor {self.id} ({self.localizacao}): sem leitura"
+        return f"Sensor {self.id} ({self.localizacao}): {self._ultima_leitura} A"
+
+
+class AtuadorDisjuntor(Dispositivo):
+    def __init__(self, id, localizacao):
+        super().__init__(id, localizacao)
+        self._armado = True
+
+    def desarmar(self):
+        self._armado = False
+
+    def rearmar(self):
+        self._armado = True
+
+    def status(self):
+        estado = "armado" if self._armado else "desarmado"
+        return f"Disjuntor {self.id} ({self.localizacao}): {estado}"
+
+
+class ControladorProtecao:
+    def __init__(self, sensor, atuador, limite):
+        self._sensor = sensor
+        self._atuador = atuador
+        self._limite = limite
+
+    def avaliar(self, corrente):
+        self._sensor.medir(corrente)
+        if corrente >= self._limite:
+            self._atuador.desarmar()
+        else:
+            self._atuador.rearmar()
+
+    def relatorio(self):
+        return [self._sensor.status(), self._atuador.status()]
+```
+
+## Teste e saída verificada
+
+```python
+sensor = SensorCorrente("SC1", "Painel Principal")
+disjuntor = AtuadorDisjuntor("D1", "Painel Principal")
+controlador = ControladorProtecao(sensor, disjuntor, limite=20)
+
+for corrente in [12, 18, 22, 25, 15]:
+    controlador.avaliar(corrente)
+    for linha in controlador.relatorio():
+        print(linha)
+    print("---")
+```
+
+Saída verificada:
+
+```
+Sensor SC1 (Painel Principal): 12 A
+Disjuntor D1 (Painel Principal): armado
+---
+Sensor SC1 (Painel Principal): 18 A
+Disjuntor D1 (Painel Principal): armado
+---
+Sensor SC1 (Painel Principal): 22 A
+Disjuntor D1 (Painel Principal): desarmado
+---
+Sensor SC1 (Painel Principal): 25 A
+Disjuntor D1 (Painel Principal): desarmado
+---
+Sensor SC1 (Painel Principal): 15 A
+Disjuntor D1 (Painel Principal): armado
+---
+```
+
+Com limite de 20 A: a corrente de 22 A (≥ 20) desarma o disjuntor, a de
+25 A mantém desarmado, e a queda para 15 A (< 20) rearma — exatamente o
+comportamento de proteção exigido no trabalho.
+
+## Pontos de atenção na correção
+
+- `ControladorProtecao` não herda de `Dispositivo` (relação de
+  composição, não de herança) — é esperado que os alunos reconheçam
+  essa diferença, assim como fizeram com `ControladorIluminacao` na
+  aula.
+- `SensorCorrente` e `AtuadorDisjuntor` devem herdar de `Dispositivo` e
+  reaproveitar `id`/`localizacao` via `super().__init__(...)`, não
+  redeclarando esses atributos.
+- Os atributos internos (`_ultima_leitura`, `_armado`) não devem ser
+  acessados diretamente fora das próprias classes — só através dos
+  métodos públicos.

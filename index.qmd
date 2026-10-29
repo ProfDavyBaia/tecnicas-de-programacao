@@ -102,16 +102,49 @@ aplicações em engenharia.
 :::{.aula-card}
 <div class="numero">05</div>
 <div>
-<strong>Programação orientada a objetos</strong>
+<strong>Introdução à programação orientada a objetos</strong>
+
+Paradigmas de programação, pensamento orientado a objetos (estado e
+comportamento), classe e objeto revisitados, e os quatro pilares da
+POO: abstração, encapsulamento, herança e polimorfismo — de forma
+conceitual, independente de linguagem.
+
+<span class="links">[Slides](aulas/05-introducao-poo/aula.html) ·
+[Notas](aulas/05-introducao-poo/notas.qmd) ·
+[Atividade](aulas/05-introducao-poo/atividade.qmd) ·
+[Gabarito](aulas/05-introducao-poo/gabarito.qmd)</span>
+</div>
+:::
+
+:::{.aula-card}
+<div class="numero">06</div>
+<div>
+<strong>Programação orientada a objetos em Python</strong>
 
 Classe e objeto, construtor `__init__` e `self`, métodos, encapsulamento
 por convenção, comparação com o estilo funcional das aulas anteriores e
 aplicações em engenharia.
 
-<span class="links">[Slides](aulas/05-orientacao-a-objetos/aula.html) ·
-[Notas](aulas/05-orientacao-a-objetos/notas.qmd) ·
-[Atividade](aulas/05-orientacao-a-objetos/atividade.qmd) ·
-[Gabarito](aulas/05-orientacao-a-objetos/gabarito.qmd)</span>
+<span class="links">[Slides](aulas/06-orientacao-a-objetos/aula.html) ·
+[Notas](aulas/06-orientacao-a-objetos/notas.qmd) ·
+[Atividade](aulas/06-orientacao-a-objetos/atividade.qmd) ·
+[Gabarito](aulas/06-orientacao-a-objetos/gabarito.qmd)</span>
+</div>
+:::
+
+:::{.aula-card}
+<div class="numero">07</div>
+<div>
+<strong>Desenvolvendo um sistema orientado a objetos</strong>
+
+Do levantamento de requisitos ao código testado: estudo de caso de um
+sistema de iluminação automática (herança, composição e polimorfismo
+juntos), seguido do trabalho avaliativo — um sistema de proteção
+elétrica contra sobrecorrente.
+
+<span class="links">[Slides](aulas/07-projeto-poo-engenharia/aula.html) ·
+[Notas](aulas/07-projeto-poo-engenharia/notas.qmd) ·
+[Trabalho](aulas/07-projeto-poo-engenharia/atividade.qmd)</span>
 </div>
 :::
 
@@ -135,7 +168,9 @@ aplicações em engenharia.
 | 3      |      | Filas na prática: BFS, filas de prioridade e escalonamento |
 | 4      |      | Árvores |
 | 5      |      | Tabelas hash |
-| 6      |      | Programação orientada a objetos |
+| 6      |      | Introdução à POO: paradigma e os quatro pilares |
+| 7      |      | Programação orientada a objetos em Python: classe, `self` e métodos |
+| 8      |      | Desenvolvendo um sistema OO: estudo de caso e trabalho avaliativo |
 
 ## Avaliação {#avaliacao}
 

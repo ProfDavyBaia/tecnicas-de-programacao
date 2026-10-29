@@ -1,23 +1,6 @@
 ---
-title: "Aula 05 — Programação Orientada a Objetos"
-subtitle: "Classe, objeto, atributos e métodos — agrupando dados e comportamento"
-format:
-  revealjs:
-    theme: simple
-    slide-number: true
-    transition: fade
-    css: ../../styles-slides.css
+title: "Notas — Aula 06: Programação Orientada a Objetos"
 ---
-
-## Agenda da Aula
-
-1. Motivação — por que orientação a objetos
-2. Classe e objeto: os conceitos fundamentais
-3. O construtor `__init__` e `self`
-4. Métodos: comportamento junto aos dados
-5. Reescrevendo a Pilha como classe
-6. Encapsulamento por convenção
-7. Vantagens, aplicações em engenharia e exercício final
 
 ## Motivação
 
@@ -31,20 +14,26 @@ acontece "por baixo do capô" — mas tem um custo: dados e comportamento
 vivem separados, e é responsabilidade de quem programa lembrar qual
 conjunto de funções pertence a qual dicionário.
 
-**Programação orientada a objetos (POO)** resolve isso agrupando dados e
-comportamento numa única unidade: o **objeto**.
+**Programação orientada a objetos (POO)** é um modelo de programação que
+resolve isso agrupando dados e comportamento numa única unidade: o
+**objeto**. É um dos três tópicos centrais da ementa desta disciplina,
+junto com estruturas de dados e algoritmos de ordenação.
 
-## O Que é uma Classe?
+Na Aula 05 vimos esses conceitos de forma independente de linguagem —
+abstração, encapsulamento, herança e polimorfismo. Agora vamos ver como
+tudo isso se traduz, concretamente, em código Python: `class`,
+`__init__`, `self` e métodos.
+
+## Classe e objeto
 
 Uma **classe** é o molde — a definição de quais atributos (dados) e
-métodos (comportamentos) um tipo de objeto vai ter.
-
-Um **objeto** (ou **instância**) é uma ocorrência concreta, construída a
-partir da classe, com seus próprios valores para os atributos.
+métodos (comportamentos) um tipo de objeto vai ter. Um **objeto** (ou
+**instância**) é uma ocorrência concreta, construída a partir da classe,
+com seus próprios valores para os atributos.
 
 > Analogia: a classe é a planta de uma casa; cada casa construída a
-> partir dela é um objeto — mesma estrutura, estados (móveis, moradores)
-> diferentes.
+> partir dela é um objeto — mesma estrutura, estados (móveis,
+> moradores) diferentes.
 
 ```python
 class Pilha:
@@ -55,16 +44,15 @@ p2 = Pilha()
 print(p1 is p2)  # False — são objetos distintos
 ```
 
-## O Construtor `__init__` e `self`
+## O construtor `__init__` e `self`
 
 Toda classe em Python pode definir um método especial `__init__`,
 chamado automaticamente quando um objeto é criado — é aqui que os
 **atributos de instância** são inicializados.
 
 `self` é o primeiro parâmetro de todo método: representa o **próprio
-objeto** sobre o qual o método está sendo chamado. Python o passa
-automaticamente — você nunca o informa explicitamente ao chamar o
-método.
+objeto** sobre o qual o método está sendo chamado. O Python o passa
+automaticamente — quem chama o método nunca o informa explicitamente.
 
 ```python
 class Pilha:
@@ -75,10 +63,10 @@ p = Pilha()
 print(p._dados)  # []
 ```
 
-## Métodos: Comportamento Junto aos Dados
+## Métodos: comportamento junto aos dados
 
 Um **método** é uma função definida dentro da classe, que opera sobre os
-atributos daquele objeto específico através de `self`.
+atributos daquele objeto específico através de `self`:
 
 ```python
 class Pilha:
@@ -100,10 +88,10 @@ class Pilha:
         return len(self._dados) == 0
 ```
 
-Note: `item` é passado explicitamente em `p.push(10)`, mas `self` nunca
-aparece na chamada — só na definição do método.
+Note que `item` é passado explicitamente em `p.push(10)`, mas `self`
+nunca aparece na chamada — somente na definição do método.
 
-## Comparando os Dois Estilos
+## Comparando os dois estilos
 
 Lado a lado, a Pilha da Aula 01 (dicionário + funções) e a mesma Pilha
 como classe:
@@ -117,7 +105,7 @@ print(peek(p))  # 10 — "peek" e "p" são conceitos separados
 ```
 
 ```python
-# Estilo orientado a objetos (Aula 05)
+# Estilo orientado a objetos (Aula 06)
 p = Pilha()
 p.push(5)
 p.push(10)
@@ -126,9 +114,9 @@ print(p.peek())  # 10 — "peek" pertence a "p"
 
 A operação e o dado deixam de ser duas coisas separadas (uma função, um
 dicionário) e passam a ser uma coisa só: o objeto `p` "sabe" empilhar e
-desempilhar.
+desempilhar sozinho.
 
-## Testando a Classe Pilha
+Testando a classe:
 
 ```python
 p = Pilha()
@@ -139,19 +127,17 @@ print(p.pop())        # 10
 print(p.is_empty())   # False
 ```
 
-Saída verificada:
-
 ```
 10
 10
 False
 ```
 
-## Múltiplas Instâncias Independentes
+## Múltiplas instâncias independentes
 
 Cada objeto carrega o **seu próprio estado** — não há risco de confundir
 qual dicionário pertence a qual pilha, porque não existem dicionários
-soltos sendo passados entre funções.
+soltos sendo passados entre funções:
 
 ```python
 p1 = Pilha()
@@ -161,13 +147,11 @@ p2.push("B")
 print(p1.peek(), p2.peek())
 ```
 
-Saída verificada:
-
 ```
 A B
 ```
 
-## Encapsulamento por Convenção
+## Encapsulamento por convenção
 
 Em Python não existe atributo verdadeiramente "privado" (como em Java ou
 C++), mas há uma **convenção** amplamente respeitada: um atributo cujo
@@ -185,23 +169,23 @@ A ideia: o objeto expõe **métodos** (`push`, `pop`, `peek`, `is_empty`)
 como sua interface pública, e esconde a estrutura interna (`_dados`) que
 pode mudar de implementação sem afetar quem usa a classe.
 
-## Vantagens da Orientação a Objetos
+## Vantagens da orientação a objetos
 
 - **Encapsulamento** — dados e comportamento vivem juntos; a
-  implementação interna pode mudar sem afetar quem usa a classe
+  implementação interna pode mudar sem afetar quem usa a classe.
 - **Organização** — cada conceito do domínio (pilha, sensor, motor) se
-  torna um tipo próprio no código, mais fácil de localizar e manter
+  torna um tipo próprio no código, mais fácil de localizar e manter.
 - **Múltiplas instâncias** — cada objeto tem seu próprio estado, sem
-  risco de misturar dados de instâncias diferentes
+  risco de misturar dados de instâncias diferentes.
 - **Interface clara** — métodos documentam o que se pode fazer com o
-  objeto, sem expor os detalhes internos
+  objeto, sem expor os detalhes internos.
 
-## Aplicações em Engenharia
+## Aplicações em engenharia
 
 Sistemas de engenharia são naturalmente modelados como **conjuntos de
 objetos com estado e comportamento próprios**: um sensor tem leituras e
-sabe calcular sua própria média; um motor tem um estado (ligado/desligado)
-e sabe ligar/desligar a si mesmo.
+sabe calcular sua própria média; um motor tem um estado
+(ligado/desligado) e sabe ligar/desligar a si mesmo.
 
 ```python
 class Sensor:
@@ -222,7 +206,7 @@ class Sensor:
         return self._leituras[-1] if self._leituras else None
 ```
 
-## Testando a Classe Sensor
+Testando com duas instâncias independentes:
 
 ```python
 temp = Sensor("Temperatura", "°C")
@@ -237,8 +221,6 @@ umidade.registrar(62)
 print(f"{umidade.nome}: média = {umidade.media():.1f} {umidade.unidade}")
 ```
 
-Saída verificada:
-
 ```
 Temperatura: última leitura = 24.8 °C, média = 24.80 °C
 Umidade: média = 60.0 %
@@ -248,14 +230,14 @@ Cada instância de `Sensor` (`temp`, `umidade`) mantém sua própria lista
 de leituras — exatamente o mesmo princípio da Pilha, aplicado a um
 domínio de engenharia.
 
-## Exercício Final
+## Exercício final
 
 Reescreva a **Fila com nó encadeado** (vista na Aula 01, com
 dicionários) como uma **classe `Fila`**, com atributos internos
 `_front`, `_rear`, `_tamanho`, e métodos `enqueue`, `dequeue`,
 `esta_vazia` e `tamanho`.
 
-**Resumo:** uma classe agrupa dados (atributos) e comportamento
+**Resumo da aula:** uma classe agrupa dados (atributos) e comportamento
 (métodos) em uma única unidade; `__init__` inicializa os atributos de um
 novo objeto; `self` refere-se ao próprio objeto dentro de um método; o
 underscore (`_atributo`) é a convenção para sinalizar "uso interno". POO
@@ -263,7 +245,7 @@ não substitui o estilo funcional das aulas anteriores — é outra
 ferramenta, mais adequada quando dados e comportamento pertencem
 naturalmente juntos.
 
-## Exercício Final — Gabarito
+## Gabarito do exercício final
 
 ```python
 class Fila:
@@ -298,7 +280,7 @@ class Fila:
         return self._tamanho
 ```
 
-## Exercício Final — Gabarito (teste e saída verificada)
+Teste e saída verificada:
 
 ```python
 fila = Fila()
@@ -310,8 +292,6 @@ while not fila.esta_vazia():
     print("Atendendo:", fila.dequeue())
 print("Fila vazia?", fila.esta_vazia())
 ```
-
-Saída verificada:
 
 ```
 Tamanho da fila: 4

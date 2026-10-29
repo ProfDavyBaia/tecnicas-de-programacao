@@ -1,0 +1,67 @@
+---
+title: "Gabarito — Aula 05: Introdução à Programação Orientada a Objetos"
+---
+
+Solução da [atividade desta aula](atividade.qmd). Como é uma atividade
+de modelagem conceitual, não há código — o que importa é a
+identificação correta de cada um dos quatro pilares no domínio
+escolhido. Abaixo, um exemplo possível de resposta.
+
+## Domínio escolhido: sistema de monitoramento de uma fazenda inteligente
+
+### 1. Abstração — classes do domínio
+
+- **`Dispositivo`** (classe base)
+  - Atributos: `id`, `localizacao`.
+  - Métodos: `status()`.
+- **`SensorSolo`**
+  - Atributos: `id`, `localizacao` (herdados), `_ultima_leitura_umidade`
+    (próprio).
+  - Métodos: `status()` (herdado, reimplementado), `ler()` (próprio).
+- **`AtuadorIrrigacao`**
+  - Atributos: `id`, `localizacao` (herdados), `_esta_ligado` (próprio).
+  - Métodos: `status()` (herdado, reimplementado), `ligar()`,
+    `desligar()` (próprios).
+
+Em cada classe, só entraram os atributos **relevantes para o sistema de
+monitoramento** — por exemplo, não há atributo para "marca do sensor"
+ou "cor do atuador", irrelevantes para esse problema.
+
+### 2. Herança
+
+`SensorSolo` e `AtuadorIrrigacao` **herdam** de `Dispositivo`: ambos são
+tipos de dispositivo, reaproveitando `id`, `localizacao` e a existência
+de um método `status()`, sem precisar redefinir esses atributos do
+zero.
+
+### 3. Polimorfismo
+
+O método `status()`, herdado de `Dispositivo`, é implementado de forma
+**diferente** em cada classe derivada:
+
+- Em `SensorSolo`, `status()` descreve a última leitura de umidade do
+  solo.
+- Em `AtuadorIrrigacao`, `status()` descreve se a irrigação está ligada
+  ou desligada.
+
+Quem consulta `dispositivo.status()` em um código genérico não precisa
+saber qual dos dois tipos de dispositivo recebeu — cada um responde à
+mesma chamada de um jeito próprio.
+
+### 4. Encapsulamento
+
+`_ultima_leitura_umidade` (em `SensorSolo`) e `_esta_ligado` (em
+`AtuadorIrrigacao`) são atributos **internos**: quem usa os objetos
+nunca deveria lê-los ou alterá-los diretamente, apenas através dos
+métodos `ler()`, `ligar()`, `desligar()` e `status()` — que formam a
+interface pública de cada classe.
+
+## Por que esse exemplo funciona bem
+
+Dispositivos de uma fazenda inteligente têm uma hierarquia natural
+(todos são "dispositivos" com identificação e localização, mas cada
+tipo se comporta de um jeito), o que ilustra bem os quatro pilares ao
+mesmo tempo. Qualquer domínio com entidades que compartilham
+características gerais, mas se comportam de formas específicas, serve
+igualmente bem — o importante é justificar cada pilar com o próprio
+domínio escolhido, e não apenas citar a definição.
