@@ -1,0 +1,193 @@
+---
+title: "Gabarito — Avaliação 2: Programação Orientada a Objetos (Aulas 05–07)"
+---
+
+Solução de referência da [prova](prova.qmd). Todo o código abaixo foi
+executado e a saída mostrada é exatamente o que o Python produz.
+
+## Questão 1 — Classe `Lampada`
+
+```python
+class Lampada:
+    def __init__(self, id, localizacao):
+        self.id = id
+        self.localizacao = localizacao
+        self._ligada = False
+
+    def ligar(self):
+        self._ligada = True
+
+    def desligar(self):
+        self._ligada = False
+
+    def status(self):
+        estado = "ligada" if self._ligada else "desligada"
+        return f"Lâmpada {self.id} ({self.localizacao}): {estado}"
+```
+
+Teste e saída verificada:
+
+```python
+lamp = Lampada("L1", "Corredor")
+print(lamp.status())
+lamp.ligar()
+print(lamp.status())
+lamp.desligar()
+print(lamp.status())
+```
+
+```
+Lâmpada L1 (Corredor): desligada
+Lâmpada L1 (Corredor): ligada
+Lâmpada L1 (Corredor): desligada
+```
+
+## Questão 2 — Classe `Bateria`
+
+```python
+class Bateria:
+    def __init__(self, capacidade_total):
+        self.capacidade_total = capacidade_total
+        self.carga_atual = 0
+
+    def carregar(self, quantidade):
+        self.carga_atual = min(self.capacidade_total, self.carga_atual + quantidade)
+
+    def descarregar(self, quantidade):
+        if quantidade > self.carga_atual:
+            raise ValueError("Carga insuficiente")
+        self.carga_atual -= quantidade
+
+    def nivel_percentual(self):
+        return (self.carga_atual / self.capacidade_total) * 100
+```
+
+Teste e saída verificada:
+
+```python
+b = Bateria(100)
+b.carregar(80)
+print(f"Nível após carregar 80: {b.nivel_percentual():.1f}%")
+b.carregar(30)
+print(f"Carga após tentar carregar mais 30 (limite 100): {b.carga_atual}")
+b.descarregar(40)
+print(f"Carga após descarregar 40: {b.carga_atual}")
+print(f"Nível percentual: {b.nivel_percentual():.1f}%")
+try:
+    b.descarregar(1000)
+except ValueError as e:
+    print(f"Erro: {e}")
+```
+
+```
+Nível após carregar 80: 80.0%
+Carga após tentar carregar mais 30 (limite 100): 100
+Carga após descarregar 40: 60
+Nível percentual: 60.0%
+Erro: Carga insuficiente
+```
+
+## Questões 3 e 4 — `Equipamento`, `Compressor`, `Valvula` e `SistemaClimatizacao`
+
+```python
+class Equipamento:
+    def __init__(self, id, localizacao):
+        self.id = id
+        self.localizacao = localizacao
+
+    def status(self):
+        raise NotImplementedError("Subclasses devem implementar status()")
+
+
+class Compressor(Equipamento):
+    def __init__(self, id, localizacao):
+        super().__init__(id, localizacao)
+        self._ligado = False
+
+    def ligar(self):
+        self._ligado = True
+
+    def desligar(self):
+        self._ligado = False
+
+    def status(self):
+        estado = "ligado" if self._ligado else "desligado"
+        return f"Compressor {self.id} ({self.localizacao}): {estado}"
+
+
+class Valvula(Equipamento):
+    def __init__(self, id, localizacao):
+        super().__init__(id, localizacao)
+        self._aberta = False
+
+    def abrir(self):
+        self._aberta = True
+
+    def fechar(self):
+        self._aberta = False
+
+    def status(self):
+        estado = "aberta" if self._aberta else "fechada"
+        return f"Válvula {self.id} ({self.localizacao}): {estado}"
+
+
+class SistemaClimatizacao:
+    def __init__(self, compressor, valvula, limite):
+        self._compressor = compressor
+        self._valvula = valvula
+        self._limite = limite
+
+    def ajustar(self, temperatura):
+        if temperatura >= self._limite:
+            self._compressor.ligar()
+            self._valvula.abrir()
+        else:
+            self._compressor.desligar()
+            self._valvula.fechar()
+
+    def relatorio(self):
+        return [self._compressor.status(), self._valvula.status()]
+```
+
+Teste e saída verificada:
+
+```python
+compressor = Compressor("C1", "Sala de Servidores")
+valvula = Valvula("V1", "Sala de Servidores")
+sistema = SistemaClimatizacao(compressor, valvula, limite=24)
+
+for temperatura in [20, 25, 28, 22, 24]:
+    sistema.ajustar(temperatura)
+    for linha in sistema.relatorio():
+        print(linha)
+    print("---")
+```
+
+```
+Compressor C1 (Sala de Servidores): desligado
+Válvula V1 (Sala de Servidores): fechada
+---
+Compressor C1 (Sala de Servidores): ligado
+Válvula V1 (Sala de Servidores): aberta
+---
+Compressor C1 (Sala de Servidores): ligado
+Válvula V1 (Sala de Servidores): aberta
+---
+Compressor C1 (Sala de Servidores): desligado
+Válvula V1 (Sala de Servidores): fechada
+---
+Compressor C1 (Sala de Servidores): ligado
+Válvula V1 (Sala de Servidores): aberta
+---
+```
+
+## Pontos de atenção na correção
+
+- Questão 3: `Compressor` e `Valvula` devem herdar de `Equipamento` via
+  `super().__init__(...)`, não redeclarando `id`/`localizacao`; o
+  atributo de estado deve ser interno (`_ligado`/`_aberta`).
+- Questão 4: `SistemaClimatizacao` não deve herdar de `Equipamento` —
+  é uma relação de composição ("tem um", não "é um"); não deve acessar
+  `_ligado`/`_aberta` diretamente, apenas via métodos.
+- Questão 1: o atributo `_ligada` deve ser interno, acessado apenas
+  através de `ligar()`, `desligar()` e `status()`.

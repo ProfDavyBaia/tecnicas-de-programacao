@@ -196,6 +196,19 @@ seguindo o padrão de dicionários e funções das aulas.
 </div>
 :::
 
+:::{.aula-card}
+<div class="numero">AV2</div>
+<div>
+<strong>Avaliação 2 — Programação orientada a objetos (Aulas 05–07)</strong>
+
+Avaliação prática individual, no computador, cobrindo conceitos de POO
+e os quatro pilares, classe/`self`/`__init__` em Python, herança,
+polimorfismo e composição.
+
+<span class="links">[Prova](avaliacoes/avaliacao-02/prova.qmd)</span>
+</div>
+:::
+
 <!-- Duplique o bloco ":::{.aula-card} ... :::" acima para cada nova avaliação -->
 
 ## Bibliografia {#bibliografia}

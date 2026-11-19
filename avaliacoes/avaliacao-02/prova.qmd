@@ -1,0 +1,168 @@
+---
+title: "Avaliação 2 — Programação Orientada a Objetos (Aulas 05–07)"
+---
+
+**Disciplina:** EGEL013 — Técnicas de Programação · **Cobertura:** Aulas
+05 a 07 (introdução à POO e os quatro pilares, classe/`self`/`__init__`
+em Python, herança, composição e desenvolvimento de sistemas OO).
+
+## Instruções gerais
+
+- Avaliação prática individual, no computador.
+- Consulta livre às notas e slides das aulas da disciplina.
+- As Questões 2, 3 e 4 devem ser resolvidas obrigatoriamente usando
+  `class` — ao contrário da Avaliação 1, aqui o padrão de dicionários e
+  funções soltas **não** deve ser usado para representar os objetos
+  pedidos.
+- Teste a saída do seu próprio programa antes de entregar.
+- Entregue um arquivo `.py` por questão (`questao1.py` a `questao4.py`).
+- Pontuação total: 10,0 pontos — 6,0 distribuídos entre as 4 questões de
+  código (entrega escrita) e 4,0 na defesa presencial (ver "Defesa
+  Presencial", abaixo).
+
+## Questão 1 — Classe básica: Lâmpada (1,0 ponto)
+
+Implemente uma classe `Lampada` que representa uma lâmpada controlada
+por software, com:
+
+- Construtor `__init__(self, id, localizacao)`: inicializa `id`,
+  `localizacao` e um atributo interno indicando se está ligada (deve
+  iniciar desligada).
+- Método `ligar(self)`.
+- Método `desligar(self)`.
+- Método `status(self)`: retorna uma string indicando `id`,
+  `localizacao` e se está "ligada" ou "desligada".
+
+Teste criando uma lâmpada, imprimindo `status()` antes de ligar,
+chamando `ligar()` e imprimindo `status()` novamente, e por fim
+chamando `desligar()` e imprimindo `status()` uma última vez.
+
+Exemplo de execução:
+
+```
+Lâmpada L1 (Corredor): desligada
+Lâmpada L1 (Corredor): ligada
+Lâmpada L1 (Corredor): desligada
+```
+
+**Requisitos:** usar `class`, `__init__` e `self`; o atributo que
+indica se a lâmpada está ligada deve ser interno (`_atributo`),
+acessado apenas através dos métodos.
+
+## Questão 2 — Classe com estado e comportamento (1,5 pontos)
+
+Implemente uma classe `Bateria` que representa a bateria de um sistema
+elétrico, com:
+
+- Construtor `__init__(self, capacidade_total)`: inicializa
+  `capacidade_total` e `carga_atual` (começa em `0`).
+- Método `carregar(self, quantidade)`: soma `quantidade` à carga atual,
+  sem nunca ultrapassar `capacidade_total` (se a soma exceder, a carga
+  deve ficar exatamente no limite).
+- Método `descarregar(self, quantidade)`: subtrai `quantidade` da carga
+  atual; deve levantar `ValueError` se `quantidade` for maior que a
+  carga disponível.
+- Método `nivel_percentual(self)`: retorna a porcentagem da carga atual
+  em relação à capacidade total.
+
+Teste criando uma bateria, carregando, tentando carregar além da
+capacidade, descarregando, e tentando descarregar mais do que a carga
+disponível (capturando o erro).
+
+Exemplo de execução:
+
+```
+Nível após carregar 80: 80.0%
+Carga após tentar carregar mais 30 (limite 100): 100
+Carga após descarregar 40: 60
+Nível percentual: 60.0%
+Erro: Carga insuficiente
+```
+
+**Requisitos:** usar `class`, `__init__` e `self`; os atributos podem
+ser públicos (`capacidade_total`, `carga_atual`) nesta questão.
+
+## Questão 3 — Herança e polimorfismo (2,0 pontos)
+
+Implemente uma classe base `Equipamento` com:
+
+- Construtor `__init__(self, id, localizacao)`.
+- Método `status(self)` que levanta `NotImplementedError` — cada
+  subclasse deve implementar o seu.
+
+A partir de `Equipamento`, implemente duas subclasses:
+
+- **`Compressor`** — atributo interno (encapsulado) indicando se está
+  ligado; métodos `ligar()`, `desligar()`; `status()` retorna uma
+  string indicando o id, a localização e se está "ligado" ou
+  "desligado".
+- **`Valvula`** — atributo interno (encapsulado) indicando se está
+  aberta; métodos `abrir()`, `fechar()`; `status()` retorna uma string
+  indicando o id, a localização e se está "aberta" ou "fechada".
+
+Ambas as subclasses devem reaproveitar o construtor de `Equipamento`
+via `super().__init__(...)`.
+
+Teste criando uma instância de cada subclasse, chamando seus métodos e
+imprimindo `status()` de ambas antes e depois de alterar seu estado.
+
+**Requisitos:** `Compressor` e `Valvula` devem herdar de `Equipamento`
+(sem redeclarar `id`/`localizacao`); `status()` deve ser reimplementado
+em cada subclasse (polimorfismo); os atributos de estado
+(ligado/aberta) devem ser internos (`_atributo`), acessados apenas
+através dos métodos.
+
+## Questão 4 — Composição (1,5 pontos)
+
+Implemente uma classe `SistemaClimatizacao` que **não** herda de
+`Equipamento` — ela deve **conter** (composição) um `Compressor` e uma
+`Valvula`, recebidos no construtor junto com um limite de temperatura:
+
+- Construtor `__init__(self, compressor, valvula, limite)`.
+- Método `ajustar(self, temperatura)`: se `temperatura >= limite`,
+  liga o compressor e abre a válvula; caso contrário, desliga o
+  compressor e fecha a válvula.
+- Método `relatorio(self)`: retorna o `status()` do compressor e da
+  válvula.
+
+Teste simulando pelo menos 5 leituras de temperatura diferentes,
+chamando `ajustar()` para cada uma e imprimindo o relatório após cada
+chamada — o conjunto de leituras deve incluir pelo menos uma vez cada
+situação (acima e abaixo do limite).
+
+**Requisitos:** `SistemaClimatizacao` deve usar os objetos
+`Compressor`/`Valvula` apenas através de seus métodos públicos
+(`ligar`, `desligar`, `abrir`, `fechar`, `status`), nunca acessando
+diretamente seus atributos internos.
+
+## Defesa Presencial (4,0 pontos)
+
+Além da entrega dos arquivos, é **obrigatório comparecer à aula do dia
+24 de novembro de 2026** para apresentar e defender oralmente os
+códigos desenvolvidos. Essa etapa presencial vale 4,0 dos 10,0 pontos
+totais da avaliação — quem não comparecer não pontua nessa parte, ainda
+que tenha entregado os arquivos corretamente.
+
+**O que será avaliado na defesa:**
+
+- Capacidade de explicar o funcionamento do próprio código (não apenas
+  ler o código na tela).
+- Respostas a perguntas sobre as decisões de projeto (por que essa
+  classe herda daquela, por que esse atributo é interno, etc.).
+- Pequenas modificações ou extensões solicitadas na hora, para
+  verificar a autoria e o entendimento do código entregue.
+
+## Entrega Final
+
+Compacte todos os arquivos pedidos em uma única pasta `.zip`, nomeada
+`AtividadeAvaliativa2.zip`, contendo:
+
+- Os quatro arquivos `.py` (`questao1.py` a `questao4.py`).
+
+**Prazo:** 23 de novembro de 2026, até às 23:59.
+
+**Modalidade:** entrega via e-mail: [davy.baia@ceca.ufal.br](mailto:davy.baia@ceca.ufal.br)
+
+**Assunto:** [2026.2.TP] - Trabalho Avaliativo 02.
+
+**Corpo do e-mail:** Nome do aluno ou aluna que desenvolveu o trabalho.
